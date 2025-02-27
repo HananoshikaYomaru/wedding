@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
@@ -47,6 +48,7 @@
     "date-fns": "latest",
     "embla-carousel-react": "8.5.1",
     "framer-motion": "latest",
+    "husky": "^9.1.7",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "react": "^19.0.0",

@@ -22,7 +22,9 @@ export default function CoupleMessage() {
 
           <div className="bg-white p-8 rounded-lg shadow-sm">
             <div className="relative aspect-square w-32 h-32 rounded-full overflow-hidden border-4 border-[#d3b8a3] shadow-md mx-auto mb-6">
-              <img src="/placeholder.svg?height=200&width=200" alt="Natalie" fill className="object-cover" />
+              <img src="/placeholder.svg?height=200&width=200" alt="Natalie" 
+              // fill
+               className="object-cover" />
             </div>
             <h3 className="text-2xl font-serif text-center text-[#3d3d3d] mb-4">Natalie</h3>
             <p className="text-[#6d6d6d] mb-4 italic">

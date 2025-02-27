@@ -3,16 +3,17 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
+
 export default function PhotoGallery() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   const photos = [
-    { src: "/placeholder.svg?height=600&width=400", alt: "Couple photo 1" },
-    { src: "/wedding/placeholder.svg?height=600&width=400", alt: "Couple photo 2" },
-    { src: "/wedding/placeholder.svg?height=600&width=400", alt: "Couple photo 3" },
-    { src: "/wedding/placeholder.svg?height=600&width=400", alt: "Couple photo 4" },
-    { src: "/wedding/placeholder.svg?height=600&width=400", alt: "Couple photo 5" },
-    { src: "/wedding/placeholder.svg?height=600&width=400", alt: "Couple photo 6" },
+    { src: `${import.meta.env.BASE_URL}/placeholder.svg?height=600&width=400`, alt: "Couple photo 1" },
+    { src: `${import.meta.env.BASE_URL}/placeholder.svg?height=600&width=400`, alt: "Couple photo 2" },
+    { src: `${import.meta.env.BASE_URL}/placeholder.svg?height=600&width=400`, alt: "Couple photo 3" },
+    { src: `${import.meta.env.BASE_URL}/placeholder.svg?height=600&width=400`, alt: "Couple photo 4" },
+    { src: `${import.meta.env.BASE_URL}/placeholder.svg?height=600&width=400`, alt: "Couple photo 5" },
+    { src: `${import.meta.env.BASE_URL}/placeholder.svg?height=600&width=400`, alt: "Couple photo 6" },
   ];
 
   return (
@@ -30,7 +31,7 @@ export default function PhotoGallery() {
               onClick={() => setSelectedImage(index)}
             >
               <img
-                src={photo.src || "/wedding/placeholder.svg"}
+                src={photo.src ||  `${import.meta.env.BASE_URL}/placeholder.svg`}
                 alt={photo.alt}
                 className="object-cover transition-transform duration-300 group-hover:scale-110"
               />

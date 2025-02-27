@@ -46,7 +46,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             July 6, 2025 • Vancouver, BC
           </p>
           <p className="text-sm text-gray-300 mt-6">
-            Made with love for our special day
+            Made with ❤️ for our special day
           </p>
         </div>
       </footer>

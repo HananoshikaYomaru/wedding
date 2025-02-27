@@ -50,7 +50,7 @@ export default function Hero() {
     <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img
-          src="/wedding/placeholder.svg?height=1080&width=1920"
+          src={`${import.meta.env.BASE_URL}/placeholder.svg?height=1080&width=1920`}
           alt="Wedding background"
           className="object-cover opacity-30"
         />

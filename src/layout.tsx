@@ -20,7 +20,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <div className="font-serif text-xl text-[#d3b8a3]">
             Natalie & Man Lung
           </div>
-          <ul className="flex items-center space-x-6 text-sm text-[#6d6d6d]">
+          <ul className="flex items-center gap-2 sm:space-x-6 text-sm text-[#6d6d6d]">
             <ConfettiControl />
             <li className="hover:text-[#d3b8a3]">
               <a
@@ -51,4 +51,4 @@ export default function RootLayout({ children }: RootLayoutProps) {
       </footer>
     </>
   );
-} 
+}

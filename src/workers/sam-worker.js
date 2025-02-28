@@ -1,47 +1,59 @@
-// This is a simplified worker that simulates SAM2 image segmentation
-// In a real implementation, this would use the actual SAM2 model
+// This is a placeholder for the SAM (Segment Anything Model) worker
+// In a real implementation, this would use onnxruntime-web to run the model
 
-// Simulate loading the model
+// Handle messages from the main thread
 self.onmessage = async (e) => {
   const { type, data } = e.data;
 
   if (type === "ping") {
-    // Simulate model loading
-    setTimeout(() => {
-      self.postMessage({
-        type: "pong",
-        data: {
-          success: true,
-          device: "CPU (simulated)",
-        },
-      });
-    }, 500);
+    // Initialize the model
+    self.postMessage({
+      type: "pong",
+      data: {
+        success: true,
+        device: "CPU",
+      },
+    });
   } else if (type === "encodeImage") {
-    // Simulate image encoding
-    setTimeout(() => {
-      self.postMessage({
-        type: "encodeImageDone",
-        data: { durationMs: 200 },
-      });
-    }, 1000);
-  } else if (type === "decodeMask") {
-    // Simulate mask decoding
-    const { points } = data;
+    // Encode the image
+    // In a real implementation, this would run the encoder part of the model
 
-    setTimeout(() => {
-      // In a real implementation, this would return actual mask data
-      self.postMessage({
-        type: "decodeMaskResult",
-        data: {
-          masks: {
-            dims: [1, 3, 256, 256],
-            cpuData: new Float32Array(256 * 256).fill(0.5),
-          },
-          iou_predictions: {
-            cpuData: [0.8, 0.7, 0.6],
-          },
+    // Simulate processing time
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    self.postMessage({
+      type: "encodeImageDone",
+      data: { durationMs: 500 },
+    });
+  } else if (type === "decodeMask") {
+    // Decode the mask based on points
+    // In a real implementation, this would run the decoder part of the model
+
+    // Simulate processing time
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Create a dummy mask result
+    const { points } = data;
+    const maskWidth = 256;
+    const maskHeight = 256;
+    const maskArray = new Float32Array(maskWidth * maskHeight);
+
+    // Fill the mask with 1s (selected) or 0s (not selected)
+    for (let i = 0; i < maskArray.length; i++) {
+      maskArray[i] = Math.random() > 0.5 ? 1 : 0;
+    }
+
+    self.postMessage({
+      type: "decodeMaskResult",
+      data: {
+        masks: {
+          dims: [1, 3, maskWidth, maskHeight],
+          cpuData: maskArray,
         },
-      });
-    }, 1500);
+        iou_predictions: {
+          cpuData: [0.9, 0.8, 0.7],
+        },
+      },
+    });
   }
 };

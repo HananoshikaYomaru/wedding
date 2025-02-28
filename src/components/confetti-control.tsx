@@ -96,7 +96,9 @@ export const ConfettiControl = () => {
         wind={0.003}
         drawShape={getDrawShape()}
       />
-      <Toggle onClick={handleToggleClick}>{getEmoji()}</Toggle>
+      <Toggle onClick={handleToggleClick} className="border border-[#d3b8a3]">
+        {getEmoji()}
+      </Toggle>
     </div>
   );
 };

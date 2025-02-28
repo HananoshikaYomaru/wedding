@@ -112,6 +112,8 @@
   top: 1rem;
   right: 1rem;
   color: white;
+  z-index: 100;
+  @apply cursor-pointer;
 }
 
 .lightbox-close-button:hover {

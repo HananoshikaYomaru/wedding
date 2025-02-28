@@ -28,6 +28,10 @@ export default defineConfig({
     },
   },
 
+  optimizeDeps: {
+    exclude: ["onnxruntime-web"],
+  },
+
   server: {
     port: 3000,
   },

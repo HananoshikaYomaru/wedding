@@ -19,11 +19,19 @@ import { Button } from "@/components/ui/button";
 export const imageSize = { w: 1024, h: 1024 };
 export const maskSize = { w: 256, h: 256 };
 
+type Status =
+  | "Encode image"
+  | "Loading model"
+  | "Ready. Click on image"
+  | "Decoding"
+  | "Encoding"
+  | "Error (check JS console)";
+
 type ActionButtonsProps = {
   encodeImageClick: () => void;
   loading: boolean;
   imageEncoded: boolean;
-  status: string;
+  status: Status;
   fileInputEl: React.RefObject<HTMLInputElement | null>;
   setInputDialogOpen: (open: boolean) => void;
   cropClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -40,43 +48,53 @@ export const ActionButtons = ({
   setInputDialogOpen,
   cropClick,
   mask,
-}: ActionButtonsProps) => (
-  <div className="flex justify-between gap-4">
-    <Button onClick={encodeImageClick} disabled={loading || imageEncoded}>
-      <p className="flex items-center gap-2">
-        {loading && <LoaderCircle className="animate-spin w-6 h-6" />}
-        {status}
-      </p>
-    </Button>
-    <div className="flex gap-1">
-      <Button
-        onClick={() => {
-          if (!fileInputEl.current) {
-            console.log("no file input");
-            return;
-          }
-          fileInputEl.current.click();
-        }}
-        variant="secondary"
-        disabled={loading}
-      >
-        <ImageUp /> Upload
+}: ActionButtonsProps) => {
+  // as soon as status is "Ready. we encode the image
+
+  useEffect(() => {
+    if (status === "Encode image") {
+      encodeImageClick();
+    }
+  }, [status, encodeImageClick]);
+
+  return (
+    <div className="flex justify-between gap-4">
+      <Button onClick={encodeImageClick} disabled={loading || imageEncoded}>
+        <p className="flex items-center gap-2">
+          {loading && <LoaderCircle className="animate-spin w-6 h-6" />}
+          {status}
+        </p>
       </Button>
-      <Button
-        onClick={() => {
-          setInputDialogOpen(true);
-        }}
-        variant="secondary"
-        disabled={loading}
-      >
-        <ImageUp /> From URL
-      </Button>
-      <Button onClick={cropClick} disabled={mask == null} variant="secondary">
-        <ImageDown /> Crop
-      </Button>
+      <div className="flex gap-1">
+        <Button
+          onClick={() => {
+            if (!fileInputEl.current) {
+              console.log("no file input");
+              return;
+            }
+            fileInputEl.current.click();
+          }}
+          variant="secondary"
+          disabled={loading}
+        >
+          <ImageUp /> Upload
+        </Button>
+        <Button
+          onClick={() => {
+            setInputDialogOpen(true);
+          }}
+          variant="secondary"
+          disabled={loading}
+        >
+          <ImageUp /> From URL
+        </Button>
+        <Button onClick={cropClick} disabled={mask == null} variant="secondary">
+          <ImageDown /> Crop
+        </Button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Component for the canvas
 export const ImageCanvas = ({
@@ -112,7 +130,7 @@ export const useSamWorker = ({
   const samWorker = useRef<Worker | null>(null);
   const [loading, setLoading] = useState(false);
   const [device, setDevice] = useState(null);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<Status>("Loading model");
   const [imageEncoded, setImageEncoded] = useState(false);
   const [stats, setStats] = useState(null);
 
@@ -180,7 +198,11 @@ export const useSamWorker = ({
 const inputDialogDefaultURL =
   "https://upload.wikimedia.org/wikipedia/commons/9/96/Pro_Air_Martin_404_N255S.jpg";
 
-export function SamEditor() {
+type SamEditorProps = {
+  onImageCropped: (imageUrl: string) => void;
+};
+
+export function SamEditor({ onImageCropped }: SamEditorProps) {
   // state
 
   // const [imageEncoded, setImageEncoded] = useState(false);
@@ -302,13 +324,16 @@ export function SamEditor() {
   const cropClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (!image || !mask) return;
-    const link = document.createElement("a");
-    link.href = maskImageCanvas(image, mask).toDataURL();
-    link.download = "crop.png";
+    // const link = document.createElement("a");
+    // link.href = maskImageCanvas(image, mask).toDataURL();
+    // link.download = "crop.png";
 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+
+    const url = maskImageCanvas(image, mask).toDataURL();
+    onImageCropped(url);
   };
 
   // Reset all the image-based state: points, mask, offscreen canvases ..

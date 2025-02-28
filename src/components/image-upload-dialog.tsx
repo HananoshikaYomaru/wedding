@@ -9,18 +9,19 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Sticker } from "./draggable-stickers";
+// import {
+//   resizeCanvas,
+//   maskImageCanvas,
+//   canvasToFloat32Array,
+//   float32ArrayToCanvas,
+// } from "./image-segmentation";
+
 import {
   resizeCanvas,
   maskImageCanvas,
   canvasToFloat32Array,
   float32ArrayToCanvas,
-} from "./image-segmentation";
-
-import {
-  mergeMasks,
-  resizeAndPadBox,
   sliceTensor,
-  maskCanvasToFloat32Array,
 } from "@/lib/imageutils";
 import { SamEditor } from "./sam-editor";
 
@@ -40,16 +41,32 @@ type ImageUploadDialog2Props = {
 };
 
 export const ImageUploadDialog2 = ({
+  onStickerCreated,
   isOpen,
   onClose,
 }: ImageUploadDialog2Props) => {
+  const imageToSticker = (imageUrl: string) => {
+    // Create the sticker
+    const newSticker: Sticker = {
+      id: Date.now(),
+      x: Math.random() * 200 + 100,
+      y: Math.random() * 100 + 50,
+      rotation: Math.random() * 30 - 15,
+      type: "image",
+      imageSrc: imageUrl,
+    };
+
+    onStickerCreated(newSticker);
+
+    onClose();
+  };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="min-w-min rounded-lg">
         <DialogHeader>
           <DialogTitle>Create Your Sticker</DialogTitle>
         </DialogHeader>
-        <SamEditor />
+        <SamEditor onImageCropped={imageToSticker} />
       </DialogContent>
     </Dialog>
   );

@@ -52,7 +52,7 @@ export const DraggableStickers = () => {
     <>
       {/* Custom Image Stickers */}
       {stickers.map((sticker) => (
-        <motion.div
+        <motion.img
           key={sticker.id}
           drag
           dragMomentum={false}
@@ -67,14 +67,10 @@ export const DraggableStickers = () => {
             rotate: sticker.rotation,
             scale: draggingSticker === sticker.id ? 1.2 : 1,
           }}
-          className="sticker"
-        >
-          <img
-            src={sticker.imageSrc}
-            alt="Custom sticker"
-            className="image-sticker"
-          />
-        </motion.div>
+          className="sticker img-sticker"
+          alt="Custom sticker"
+          src={sticker.imageSrc}
+        />
       ))}
       <button onClick={handleAddSticker} className="add-sticker-button">
         <Image size={16} className="button-icon" />

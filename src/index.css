@@ -38,12 +38,22 @@
   --sidebar-accent-foreground: 240 5.9% 10%;
   --sidebar-border: 220 13% 91%;
   --sidebar-ring: 217.2 91.2% 59.8%;
+  --focus-ring-color: #e5a199;
+  --focus-ring-offset: 2px;
 }
 
 body {
   font-family: var(--font-lato), Arial, Helvetica, sans-serif;
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
+}
+
+/* Focus styles for all focusable elements */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-ring-offset) white,
+    0 0 0 calc(var(--focus-ring-offset) + 2px) var(--focus-ring-color);
+  z-index: 1;
 }
 
 @layer utilities {

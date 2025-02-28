@@ -91,7 +91,6 @@ export const ConfettiControl = () => {
       <Confetti
         width={width}
         height={height}
-        gravity={0.03}
         numberOfPieces={getNumberOfPieces()}
         colors={getConfettiColors()}
         wind={0.003}

@@ -57,7 +57,9 @@
   transition: transform 0.3s;
 }
 
-.photo-item:hover .photo-image {
+.photo-item:hover .photo-image,
+.photo-item:focus .photo-image,
+.photo-item:focus-within .photo-image {
   transform: scale(1.1);
 }
 
@@ -72,7 +74,9 @@
   transition: opacity 0.3s;
 }
 
-.photo-item:hover .photo-overlay {
+.photo-item:hover .photo-overlay,
+.photo-item:focus .photo-overlay,
+.photo-item:focus-within .photo-overlay {
   opacity: 1;
 }
 
@@ -85,7 +89,9 @@
   transition: opacity 0.3s;
 }
 
-.photo-item:hover .photo-view-text {
+.photo-item:hover .photo-view-text,
+.photo-item:focus .photo-view-text,
+.photo-item:focus-within .photo-view-text {
   opacity: 1;
 }
 

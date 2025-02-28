@@ -1,60 +1,76 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { format } from "date-fns"
-import { CalendarIcon, CalendarDays } from "lucide-react"
+import { useState } from "react";
+import { format } from "date-fns";
+import { CalendarIcon, CalendarDays } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function EventCalendar() {
-  const [date, setDate] = useState<Date | undefined>(new Date(2025, 6, 6)) // July 6, 2025
+  const [date, setDate] = useState<Date | undefined>(new Date(2025, 6, 6)); // July 6, 2025
 
   const events = [
     {
-      date: new Date(2025, 2, 15), // March 15, 2025
+      date: new Date(2025, 2, 1), // March 1, 2025
       title: "Save the Date",
       description: "Save the date cards sent out to all guests",
     },
     {
-      date: new Date(2025, 4, 1), // May 1, 2025
+      date: new Date(2025, 3, 1), // May 1, 2025
       title: "RSVP Deadline",
       description: "Please confirm your attendance by this date",
     },
     {
-      date: new Date(2025, 5, 5), // June 5, 2025
-      title: "Rehearsal Dinner",
-      description: "For wedding party and immediate family only",
+      date: new Date(2025, 5, 2), // July 2, 2025
+      title: "Bridal Shower",
+      description:
+        "For the bridal party and immediate family only. This is a temporary date, we will confirm the final date closer to the wedding.",
     },
     {
-      date: new Date(2025, 6, 5), // July 5, 2025
-      title: "Welcome Dinner",
-      description: "Casual dinner for out-of-town guests at The Harbor Restaurant",
+      date: new Date(2025, 6, 2), // July 2, 2025
+      title: "Bachelor Party",
+      description:
+        "For the groom and his friends. This is a temporary date, we will confirm the final date closer to the wedding.",
+    },
+    {
+      date: new Date(2025, 6, 3), // July 3, 2025
+      title: "Rehearsal Dinner",
+      description:
+        "For wedding party and immediate family only. This is a temporary date, we will confirm the final date closer to the wedding.",
     },
     {
       date: new Date(2025, 6, 6), // July 6, 2025
       title: "Wedding Day",
-      description: "Ceremony at 3:00 PM, Reception to follow at 5:30 PM",
+      description: "Ceremony at 5:30 PM, Reception to follow at 7:30 PM",
     },
     {
       date: new Date(2025, 6, 7), // July 7, 2025
-      title: "Farewell Brunch",
-      description: "Casual brunch for all guests at The Garden Café, 10:00 AM - 12:00 PM",
+      title: "Honey Moon 🍯",
+      description: "We're off to the Zurich, Switzerland 🇨🇭!",
     },
-  ]
+  ];
 
   // Find the selected event
-  const selectedEvent = events.find((event) => date && event.date.toDateString() === date.toDateString())
+  const selectedEvent = events.find(
+    (event) => date && event.date.toDateString() === date.toDateString(),
+  );
 
   // Get all important dates for the calendar
-  const importantDates = events.map((event) => event.date)
+  const importantDates = events.map((event) => event.date);
 
   return (
     <section className="py-20 px-4 bg-[#f8f5f2]">
       <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-serif text-center text-[#3d3d3d] mb-16">Important Dates</h2>
+        <h2 className="text-3xl md:text-4xl font-serif text-center text-[#3d3d3d] mb-16">
+          Important Dates
+        </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-sm flex flex-col items-center">
@@ -62,7 +78,10 @@ export default function EventCalendar() {
               <PopoverTrigger asChild>
                 <Button
                   variant={"outline"}
-                  className={cn("w-full justify-start text-left font-normal mb-4", !date && "text-muted-foreground")}
+                  className={cn(
+                    "w-full justify-start text-left font-normal mb-4",
+                    !date && "text-muted-foreground",
+                  )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {date ? format(date, "PPP") : <span>Pick a date</span>}
@@ -96,31 +115,41 @@ export default function EventCalendar() {
             </Popover>
 
             <div className="w-full text-center">
-              <p className="text-sm text-[#6d6d6d] italic mb-4">Select a date to see event details</p>
+              <p className="text-sm text-[#6d6d6d] italic mb-4">
+                Select a date to see event details
+              </p>
 
               {selectedEvent ? (
                 <div className="p-4 border border-[#e5a199] rounded-lg bg-[#f8e9e6]">
-                  <h3 className="text-xl font-medium text-[#3d3d3d] mb-2">{selectedEvent.title}</h3>
-                  <p className="text-[#6d6d6d] mb-2">{format(selectedEvent.date, "MMMM d, yyyy")}</p>
+                  <h3 className="text-xl font-medium text-[#3d3d3d] mb-2">
+                    {selectedEvent.title}
+                  </h3>
+                  <p className="text-[#6d6d6d] mb-2">
+                    {format(selectedEvent.date, "MMMM d, yyyy")}
+                  </p>
                   <p className="text-[#6d6d6d]">{selectedEvent.description}</p>
                 </div>
               ) : (
                 <div className="p-4 border border-dashed border-[#d3b8a3] rounded-lg">
-                  <p className="text-[#6d6d6d]">Please select a highlighted date to view event details</p>
+                  <p className="text-[#6d6d6d]">
+                    Please select a highlighted date to view event details
+                  </p>
                 </div>
               )}
             </div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xl font-medium text-[#3d3d3d] mb-4">Timeline of Events</h3>
+            <h3 className="text-xl font-medium text-[#3d3d3d] mb-4">
+              Timeline of Events
+            </h3>
 
             {events.map((event, index) => (
-              <div
+              <button
                 key={index}
-                className={`flex flex-row gap-4 p-4 rounded-lg bg-white shadow-sm cursor-pointer hover:border-[#e5a199] border ${
+                className={`flex flex-row gap-4 p-4 w-full rounded-lg bg-white shadow-sm cursor-pointer hover:border-[#e5a199] border ${
                   date && event.date.toDateString() === date.toDateString()
-                    ? "border-[#e5a199] bg-[#f8e9e6]"
+                    ? "border-[#e5a199] bg-[#f8e9e6] "
                     : "border-transparent"
                 }`}
                 onClick={() => setDate(event.date)}
@@ -129,16 +158,19 @@ export default function EventCalendar() {
                   <CalendarDays className="w-5 h-5 text-[#d3b8a3]" />
                 </div>
 
-                <div className="flex-grow">
-                  <h4 className="text-md font-medium text-[#3d3d3d]">{event.title}</h4>
-                  <p className="text-sm text-[#6d6d6d]">{format(event.date, "MMMM d, yyyy")}</p>
+                <div className="flex-grow text-start">
+                  <h4 className="text-md font-medium text-[#3d3d3d]">
+                    {event.title}
+                  </h4>
+                  <p className="text-sm text-[#6d6d6d]">
+                    {format(event.date, "MMMM d, yyyy")}
+                  </p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
-

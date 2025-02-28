@@ -54,6 +54,16 @@ const photos: Photo[] = [
     description: "Couple photo 6",
     alt: "Couple photo 6",
   },
+  {
+    src: `https://app1.sharemyimage.com/2025/01/08/1E565CC3-6A69-4E01-A811-47A6F5BD8E72_4_5005_c.jpeg`,
+    description: "Couple photo 5",
+    alt: "Couple photo 5",
+  },
+  {
+    src: `https://app1.sharemyimage.com/2025/01/08/1AE6B095-5318-4524-B643-3002F2E55031_4_5005_c.jpeg`,
+    description: "Couple photo 6",
+    alt: "Couple photo 6",
+  },
 ];
 
 const Lightbox = ({
@@ -97,6 +107,7 @@ const Lightbox = ({
       <button
         className="lightbox-close-button"
         onClick={() => setSelectedImage(null)}
+        aria-label="Close lightbox"
       >
         <X size={32} />
       </button>
@@ -107,7 +118,7 @@ const Lightbox = ({
           minScale={0.5}
           maxScale={4}
           centerOnInit
-          wheel={{ wheelDisabled: false }}
+          wheel={{ wheelDisabled: false, step: 15 }}
           doubleClick={{ disabled: false }}
           panning={{ disabled: false }}
         >
@@ -232,11 +243,19 @@ export default function PhotoGallery() {
               key={index}
               className="photo-item"
               onClick={() => setSelectedImage(indexOfFirstPhoto + index)}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  setSelectedImage(indexOfFirstPhoto + index);
+                }
+              }}
+              role="button"
+              aria-label={`View ${photo.alt}`}
             >
               <img
                 src={photo.src || `${import.meta.env.BASE_URL}/placeholder.svg`}
                 alt={photo.alt}
-                className="photo-image"
+                className="photo-image object-cover w-full h-full"
               />
               <div className="photo-overlay">
                 <p className="photo-view-text">View Photo</p>

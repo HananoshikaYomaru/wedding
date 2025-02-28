@@ -7,8 +7,6 @@ const DraggableHearts = () => {
     { id: number; x: number; y: number; rotation: number }[]
   >([]);
   const [draggingHeart, setDraggingHeart] = useState<number | null>(null);
-  const controls = useAnimation();
-
   // Create initial hearts
   useEffect(() => {
     const initialHearts = Array.from({ length: 5 }, (_, i) => ({
@@ -102,9 +100,9 @@ export default function Hero() {
     <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden ">
       <div className="absolute inset-0 z-0">
         <img
-          src={`${import.meta.env.BASE_URL}/placeholder.svg?height=1080&width=1920`}
+          src={`${import.meta.env.BASE_URL}/pergola-1-04-20-24_50_2569-172192616930787.webp`}
           alt="Wedding background"
-          className="object-cover opacity-30"
+          className="w-full h-full object-cover opacity-30"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#faf7f5]"></div>
       </div>

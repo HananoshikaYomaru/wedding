@@ -1,0 +1,253 @@
+/* Hearts container */
+.hearts-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Heart styles */
+.heart {
+  position: absolute;
+  cursor: grab;
+  z-index: 10;
+}
+
+.heart:active {
+  cursor: grabbing;
+}
+
+.heart-icon {
+  color: #d1837b;
+  fill: #e5a199;
+}
+
+/* Sticker styles */
+.sticker {
+  position: absolute;
+  cursor: grab;
+  z-index: 10;
+}
+
+.sticker:active {
+  cursor: grabbing;
+}
+
+.image-sticker {
+  max-width: 80px;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+/* Controls */
+.controls {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  gap: 12px;
+}
+
+.add-heart-button,
+.add-sticker-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: #d3b8a3;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.add-heart-button:hover,
+.add-sticker-button:hover {
+  color: #c09a7e;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.button-icon {
+  opacity: 0.8;
+}
+
+.arrow-indicator {
+  position: absolute;
+  top: -120px;
+  right: 25px;
+}
+
+/* File upload dialog */
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.file-select-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  border: 2px dashed #d3b8a3;
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+  color: #6d6d6d;
+  transition: all 0.2s ease;
+}
+
+.file-select-button:hover {
+  background-color: rgba(211, 184, 163, 0.1);
+  border-color: #c09a7e;
+}
+
+.file-select-button span {
+  font-size: 1rem;
+}
+
+/* Segmentation dialog */
+.segmentation-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.dialog-header h3 {
+  font-family: var(--font-playfair);
+  margin: 0;
+  color: #3d3d3d;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6d6d6d;
+}
+
+.close-button:hover {
+  color: #3d3d3d;
+}
+
+.dialog-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dialog-instructions {
+  padding: 16px;
+  margin: 0;
+  color: #6d6d6d;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 512px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.processing-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: #d1837b;
+  margin-bottom: 8px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+  gap: 8px;
+  border-top: 1px solid #eee;
+}
+
+.cancel-button {
+  padding: 8px 16px;
+  background-color: transparent;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  color: #6d6d6d;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background-color: #f5f5f5;
+}
+
+.confirm-button {
+  padding: 8px 16px;
+  background-color: #e5a199;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.confirm-button:hover {
+  background-color: #d1837b;
+}
+
+.confirm-button:disabled {
+  background-color: #e5a19980;
+  cursor: not-allowed;
+}
+
+.hidden-input {
+  display: none;
+}

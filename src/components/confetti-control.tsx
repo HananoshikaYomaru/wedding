@@ -10,7 +10,7 @@ import {
 } from "@/lib/confetti";
 
 export const ConfettiControl = () => {
-  const [currentMode, setCurrentMode] = useState<ConfettiMode>("confetti");
+  const [currentMode, setCurrentMode] = useState<ConfettiMode>("off");
   const { width, height } = useWindowSize();
   const { y } = useWindowScroll();
 

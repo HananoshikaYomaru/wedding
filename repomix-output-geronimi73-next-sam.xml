@@ -1,0 +1,1054 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix. The content has been processed where security check has been disabled.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: app/**/*.*, lib/**/*.*
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Security check has been disabled - content may contain sensitive information
+</notes>
+
+<additional_info>
+
+</additional_info>
+
+</file_summary>
+
+<directory_structure>
+app/
+  globals.css
+  layout.tsx
+  page.jsx
+  SAM2.js
+  worker.js
+lib/
+  imageutils.js
+  utils.ts
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="app/globals.css">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+</file>
+
+<file path="app/layout.tsx">
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Next/SAM2",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html>
+      <body>
+        {children}
+      </body>
+    </html>
+  );
+}
+</file>
+
+<file path="app/page.jsx">
+"use client";
+
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  createContext,
+  useCallback,
+} from "react";
+import { Analytics } from "@vercel/analytics/next";
+import { cn } from "@/lib/utils";
+
+// UI
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import InputDialog from "@/components/ui/inputdialog";
+import { Button } from "@/components/ui/button";
+import {
+  LoaderCircle,
+  Crop,
+  ImageUp,
+  ImageDown,
+  Github,
+  LoaderPinwheel,
+  Fan,
+} from "lucide-react";
+
+// Image manipulations
+import {
+  resizeCanvas,
+  mergeMasks,
+  maskImageCanvas,
+  resizeAndPadBox,
+  canvasToFloat32Array,
+  float32ArrayToCanvas,
+  sliceTensor,
+  maskCanvasToFloat32Array
+} from "@/lib/imageutils";
+
+export default function Home() {
+  // resize+pad all images to 1024x1024
+  const imageSize = { w: 1024, h: 1024 };
+  const maskSize = { w: 256, h: 256 };
+
+  // state
+  const [device, setDevice] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [imageEncoded, setImageEncoded] = useState(false);
+  const [status, setStatus] = useState("");
+
+  // web worker, image and mask
+  const samWorker = useRef(null);
+  const [image, setImage] = useState(null); // canvas
+  const [mask, setMask] = useState(null); // canvas
+  const [prevMaskArray, setPrevMaskArray] = useState(null); // Float32Array
+  const [imageURL, setImageURL] = useState(
+    "https://upload.wikimedia.org/wikipedia/commons/3/38/Flamingos_Laguna_Colorada.jpg"
+  );
+  const canvasEl = useRef(null);
+  const fileInputEl = useRef(null);
+  const pointsRef = useRef([]);
+
+  const [stats, setStats] = useState(null);
+
+  // input dialog for custom URLs
+  const [inputDialogOpen, setInputDialogOpen] = useState(false);
+  const inputDialogDefaultURL = "https://upload.wikimedia.org/wikipedia/commons/9/96/Pro_Air_Martin_404_N255S.jpg"
+
+  // Start encoding image
+  const encodeImageClick = async () => {
+    samWorker.current.postMessage({
+      type: "encodeImage",
+      data: canvasToFloat32Array(resizeCanvas(image, imageSize)),
+    });
+
+    setLoading(true);
+    setStatus("Encoding");
+  };
+
+  // Start decoding, prompt with mouse coords
+  const imageClick = (event) => {
+    if (!imageEncoded) return;
+
+    event.preventDefault();
+    console.log(event.button);
+
+    const canvas = canvasEl.current;
+    const rect = event.target.getBoundingClientRect();
+
+    // input image will be resized to 1024x1024 -> normalize mouse pos to 1024x1024
+    const point = {
+      x: ((event.clientX - rect.left) / canvas.width) * imageSize.w,
+      y: ((event.clientY - rect.top) / canvas.height) * imageSize.h,
+      label: event.button === 0 ? 1 : 0,
+    };
+    pointsRef.current.push(point);
+
+    // do we have a mask already? ie. a refinement click?
+    if (prevMaskArray) {
+      const maskShape = [1, 1, maskSize.w, maskSize.h]
+
+      samWorker.current.postMessage({
+        type: "decodeMask",
+        data: {
+          points: pointsRef.current,
+          maskArray: prevMaskArray,
+          maskShape: maskShape,
+        }
+      });      
+    } else {
+      samWorker.current.postMessage({
+        type: "decodeMask",
+        data: {
+          points: pointsRef.current,
+          maskArray: null,
+          maskShape: null,
+        }
+      });      
+    }
+
+    setLoading(true);
+    setStatus("Decoding");
+  };
+
+  // Decoding finished -> parse result and update mask
+  const handleDecodingResults = (decodingResults) => {
+    // SAM2 returns 3 mask along with scores -> select best one
+    const maskTensors = decodingResults.masks;
+    const [bs, noMasks, width, height] = maskTensors.dims;
+    const maskScores = decodingResults.iou_predictions.cpuData;
+    const bestMaskIdx = maskScores.indexOf(Math.max(...maskScores));
+    const bestMaskArray = sliceTensor(maskTensors, bestMaskIdx)
+    let bestMaskCanvas = float32ArrayToCanvas(bestMaskArray, width, height)
+    bestMaskCanvas = resizeCanvas(bestMaskCanvas, imageSize);
+
+    setMask(bestMaskCanvas);
+    setPrevMaskArray(bestMaskArray);
+  };
+
+  // Handle web worker messages
+  const onWorkerMessage = (event) => {
+    const { type, data } = event.data;
+
+    if (type == "pong") {
+      const { success, device } = data;
+
+      if (success) {
+        setLoading(false);
+        setDevice(device);
+        setStatus("Encode image");
+      } else {
+        setStatus("Error (check JS console)");
+      }
+    } else if (type == "downloadInProgress" || type == "loadingInProgress") {
+      setLoading(true);
+      setStatus("Loading model");
+    } else if (type == "encodeImageDone") {
+      // alert(data.durationMs)
+      setImageEncoded(true);
+      setLoading(false);
+      setStatus("Ready. Click on image");
+    } else if (type == "decodeMaskResult") {
+      handleDecodingResults(data);
+      setLoading(false);
+      setStatus("Ready. Click on image");
+    } else if (type == "stats") {
+      setStats(data);
+    }
+  };
+
+  // Crop image with mask
+  const cropClick = (event) => {
+    const link = document.createElement("a");
+    link.href = maskImageCanvas(image, mask).toDataURL();
+    link.download = "crop.png";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Reset all the image-based state: points, mask, offscreen canvases .. 
+  const resetState = () => {
+    pointsRef.current = [];
+    setImage(null);
+    setMask(null);
+    setPrevMaskArray(null);
+    setImageEncoded(false);
+  }
+
+  // New image: From File
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0]
+    const dataURL = window.URL.createObjectURL(file)
+
+    resetState()
+    setStatus("Encode image")
+    setImageURL(dataURL)
+  }
+
+  // New image: From URL 
+  const handleUrl = (urlText) => {
+    const dataURL = urlText;
+
+    resetState()
+    setStatus("Encode image");
+    setImageURL(dataURL);
+  };
+
+  function handleRequestStats() {
+    samWorker.current.postMessage({ type: "stats" });
+  }
+
+  // Load web worker
+  useEffect(() => {
+    if (!samWorker.current) {
+      samWorker.current = new Worker(new URL("./worker.js", import.meta.url), {
+        type: "module",
+      });
+      samWorker.current.addEventListener("message", onWorkerMessage);
+      samWorker.current.postMessage({ type: "ping" });
+
+      setLoading(true);
+    }
+  }, [onWorkerMessage, handleDecodingResults]);
+
+  // Load image, pad to square and store in offscreen canvas
+  useEffect(() => {
+    if (imageURL) {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageURL;
+      img.onload = function () {
+        const largestDim =
+          img.naturalWidth > img.naturalHeight
+            ? img.naturalWidth
+            : img.naturalHeight;
+        const box = resizeAndPadBox(
+          { h: img.naturalHeight, w: img.naturalWidth },
+          { h: largestDim, w: largestDim }
+        );
+
+        const canvas = document.createElement("canvas");
+        canvas.width = largestDim;
+        canvas.height = largestDim;
+
+        canvas
+          .getContext("2d")
+          .drawImage(
+            img,
+            0,
+            0,
+            img.naturalWidth,
+            img.naturalHeight,
+            box.x,
+            box.y,
+            box.w,
+            box.h
+          );
+        setImage(canvas);
+      };
+    }
+  }, [imageURL]);
+
+  // Offscreen canvas changed, draw it
+  useEffect(() => {
+    if (image) {
+      const canvas = canvasEl.current;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(
+        image,
+        0,
+        0,
+        image.width,
+        image.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+    }
+  }, [image]);
+
+  // Mask changed, draw original image and mask on top with some alpha
+  useEffect(() => {
+    if (mask) {
+      const canvas = canvasEl.current;
+      const ctx = canvas.getContext("2d");
+
+      ctx.drawImage(
+        image,
+        0,
+        0,
+        image.width,
+        image.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+      ctx.globalAlpha = 0.7;
+      ctx.drawImage(
+        mask,
+        0,
+        0,
+        mask.width,
+        mask.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+      ctx.globalAlpha = 1;
+    }
+  }, [mask, image]);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+      <Card className="w-full max-w-2xl">
+        <div className="absolute top-4 right-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              window.open("https://github.com/geronimi73/next-sam", "_blank")
+            }
+          >
+            <Github className="w-4 h-4 mr-2" />
+            View on GitHub
+          </Button>
+        </div>
+        <CardHeader>
+          <CardTitle>
+            <div className="flex flex-col gap-2">
+              <p>
+                Clientside Image Segmentation with onnxruntime-web and Meta's SAM2
+              </p>
+              <p
+                className={cn(
+                  "flex gap-1 items-center",
+                  device ? "visible" : "invisible"
+                )}
+              >
+                <Fan
+                  color="#000"
+                  className="w-6 h-6 animate-[spin_2.5s_linear_infinite] direction-reverse"
+                />
+                Running on {device}
+              </p>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between gap-4">
+              <Button
+                onClick={encodeImageClick}
+                disabled={loading || imageEncoded}
+              >
+                <p className="flex items-center gap-2">
+                  {loading && <LoaderCircle className="animate-spin w-6 h-6" />}
+                  {status}
+                </p>
+              </Button>
+              <div className="flex gap-1">
+                <Button 
+                  onClick={()=>{fileInputEl.current.click()}} 
+                  variant="secondary" 
+                  disabled={loading}>
+                  <ImageUp/> Upload
+                </Button>
+                <Button
+                    onClick={()=>{setInputDialogOpen(true)}}
+                    variant="secondary"
+                    disabled={loading}
+                  >
+                  <ImageUp/> From URL
+                </Button>
+                <Button 
+                  onClick={cropClick} 
+                  disabled={mask==null}
+                  variant="secondary">
+                  <ImageDown/> Crop
+                </Button>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <canvas
+                ref={canvasEl}
+                width={512}
+                height={512}
+                onClick={imageClick}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  imageClick(event);
+                }}
+              />
+            </div>
+          </div>
+        </CardContent>
+        <div className="flex flex-col p-4 gap-2">
+          <Button onClick={handleRequestStats} variant="secondary">
+            Print stats
+          </Button>
+          <pre className="p-4 border-gray-600 bg-gray-100">
+            {stats != null && JSON.stringify(stats, null, 2)}
+          </pre>
+        </div>
+      </Card>
+      <InputDialog 
+        open={inputDialogOpen} 
+        setOpen={setInputDialogOpen} 
+        submitCallback={handleUrl}
+        defaultURL={inputDialogDefaultURL}
+        />
+      <input 
+        ref={fileInputEl} 
+        hidden="True" 
+        accept="image/*" 
+        type='file' 
+        onInput={handleFileUpload} 
+        />
+      <Analytics />
+    </div>
+  );
+}
+</file>
+
+<file path="app/SAM2.js">
+import path from "path";
+
+import * as ort from "onnxruntime-web/all";
+// ort.env.wasm.numThreads=1
+// ort.env.wasm.simd = false;
+
+const ENCODER_URL =
+  "https://huggingface.co/g-ronimo/sam2-tiny/resolve/main/sam2_hiera_tiny_encoder.with_runtime_opt.ort";
+const DECODER_URL =
+  "https://huggingface.co/g-ronimo/sam2-tiny/resolve/main/sam2_hiera_tiny_decoder_pr1.onnx";
+
+export class SAM2 {
+  bufferEncoder = null;
+  bufferDecoder = null;
+  sessionEncoder = null;
+  sessionDecoder = null;
+  image_encoded = null;
+
+  constructor() {}
+
+  async downloadModels() {
+    this.bufferEncoder = await this.downloadModel(ENCODER_URL);
+    this.bufferDecoder = await this.downloadModel(DECODER_URL);
+  }
+
+  async downloadModel(url) {
+    // step 1: check if cached
+    const root = await navigator.storage.getDirectory();
+    const filename = path.basename(url);
+
+    let fileHandle = await root
+      .getFileHandle(filename)
+      .catch((e) => console.error("File does not exist:", filename, e));
+
+    if (fileHandle) {
+      const file = await fileHandle.getFile();
+      if (file.size > 0) return await file.arrayBuffer();
+    }
+
+    // step 2: download if not cached
+    // console.log("File " + filename + " not in cache, downloading from " + url);
+    console.log("File not in cache, downloading from " + url);
+    let buffer = null;
+    try {
+      buffer = await fetch(url, {
+        headers: new Headers({
+          Origin: location.origin,
+        }),
+        mode: "cors",
+      }).then((response) => response.arrayBuffer());
+    } catch (e) {
+      console.error("Download of " + url + " failed: ", e);
+      return null;
+    }
+
+    // step 3: store
+    try {
+      const fileHandle = await root.getFileHandle(filename, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(buffer);
+      await writable.close();
+
+      console.log("Stored " + filename);
+    } catch (e) {
+      console.error("Storage of " + filename + " failed: ", e);
+    }
+
+    return buffer;
+  }
+
+  async createSessions() {
+    const success =
+      (await this.getEncoderSession()) && (await this.getDecoderSession());
+
+    return {
+      success: success,
+      device: success ? this.sessionEncoder[1] : null,
+    };
+  }
+
+  async getORTSession(model) {
+    /** Creating a session with executionProviders: {"webgpu", "cpu"} fails
+     *  => "Error: multiple calls to 'initWasm()' detected."
+     *  but ONLY in Safari and Firefox (wtf)
+     *  seems to be related to web worker, see https://github.com/microsoft/onnxruntime/issues/22113
+     *  => loop through each ep, catch e if not available and move on
+     */
+    let session = null;
+    for (let ep of ["webgpu", "cpu"]) {
+      try {
+        session = await ort.InferenceSession.create(model, {
+          executionProviders: [ep],
+        });
+      } catch (e) {
+        console.error(e);
+        continue;
+      }
+
+      return [session, ep];
+    }
+  }
+
+  async getEncoderSession() {
+    if (!this.sessionEncoder)
+      this.sessionEncoder = await this.getORTSession(this.bufferEncoder);
+
+    return this.sessionEncoder;
+  }
+
+  async getDecoderSession() {
+    if (!this.sessionDecoder)
+      this.sessionDecoder = await this.getORTSession(this.bufferDecoder);
+
+    return this.sessionDecoder;
+  }
+
+  async encodeImage(inputTensor) {
+    const [session, device] = await this.getEncoderSession();
+    const results = await session.run({ image: inputTensor });
+
+    this.image_encoded = {
+      high_res_feats_0: results[session.outputNames[0]],
+      high_res_feats_1: results[session.outputNames[1]],
+      image_embed: results[session.outputNames[2]],
+    };
+  }
+
+  async decode(points, masks) {
+    const [session, device] = await this.getDecoderSession();
+
+    const flatPoints = points.map((point) => {
+      return [point.x, point.y];
+    });
+
+    const flatLabels = points.map((point) => {
+      return point.label;
+    });
+
+    console.log({
+      flatPoints,
+      flatLabels,
+      masks
+    });
+
+    let mask_input, has_mask_input
+    if (masks) {
+      mask_input = masks
+      has_mask_input = new ort.Tensor("float32", [1], [1])
+    } else {
+      // dummy data
+      mask_input = new ort.Tensor(
+        "float32",
+        new Float32Array(256 * 256),
+        [1, 1, 256, 256]
+      )
+      has_mask_input = new ort.Tensor("float32", [0], [1])
+    }
+
+    const inputs = {
+      image_embed: this.image_encoded.image_embed,
+      high_res_feats_0: this.image_encoded.high_res_feats_0,
+      high_res_feats_1: this.image_encoded.high_res_feats_1,
+      point_coords: new ort.Tensor("float32", flatPoints.flat(), [
+        1,
+        flatPoints.length,
+        2,
+      ]),
+      point_labels: new ort.Tensor("float32", flatLabels, [
+        1,
+        flatLabels.length,
+      ]),
+      mask_input: mask_input,
+      has_mask_input: has_mask_input,
+    };
+
+    return await session.run(inputs);
+  }
+}
+</file>
+
+<file path="app/worker.js">
+import { SAM2 } from "./SAM2";
+import { Tensor } from "onnxruntime-web";
+
+const sam = new SAM2();
+
+const stats = {
+  device: "unknown",
+  downloadModelsTime: [],
+  encodeImageTimes: [],
+  decodeTimes: [],
+};
+
+self.onmessage = async (e) => {
+  // console.log("worker received message")
+
+  const { type, data } = e.data;
+
+  if (type === "ping") {
+    self.postMessage({ type: "downloadInProgress" });
+    const startTime = performance.now();
+    await sam.downloadModels();
+    const durationMs = performance.now() - startTime;
+    stats.downloadModelsTime.push(durationMs);
+
+    self.postMessage({ type: "loadingInProgress" });
+    const report = await sam.createSessions();
+
+    stats.device = report.device;
+
+    self.postMessage({ type: "pong", data: report });
+    self.postMessage({ type: "stats", data: stats });
+  } else if (type === "encodeImage") {
+    const { float32Array, shape } = data;
+    const imgTensor = new Tensor("float32", float32Array, shape);
+
+    const startTime = performance.now();
+    await sam.encodeImage(imgTensor);
+    const durationMs = performance.now() - startTime;
+    stats.encodeImageTimes.push(durationMs);
+
+    self.postMessage({
+      type: "encodeImageDone",
+      data: { durationMs: durationMs },
+    });
+    self.postMessage({ type: "stats", data: stats });
+  } else if (type === "decodeMask") {
+    const {points, maskArray, maskShape} = data;
+
+    const startTime = performance.now();
+
+    let decodingResults 
+    if (maskArray) {
+      const maskTensor = new Tensor("float32", maskArray, maskShape);
+      decodingResults = await sam.decode(points, maskTensor); 
+    } else {
+      decodingResults = await sam.decode(points); 
+    }
+    // decodingResults = Tensor [B=1, Masks, W, H]
+
+    self.postMessage({ type: "decodeMaskResult", data: decodingResults });
+    self.postMessage({ type: "stats", data: stats });
+  } else if (type === "stats") {
+    self.postMessage({ type: "stats", data: stats });
+  } else {
+    throw new Error(`Unknown message type: ${type}`);
+  }
+};
+</file>
+
+<file path="lib/imageutils.js">
+export function maskImageCanvas(imageCanvas, maskCanvas) {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  canvas.height = imageCanvas.height;
+  canvas.width = imageCanvas.width;
+
+  context.drawImage(
+    maskCanvas,
+    0,
+    0,
+    maskCanvas.width,
+    maskCanvas.height,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+  context.globalCompositeOperation = "source-in";
+  context.drawImage(
+    imageCanvas,
+    0,
+    0,
+    imageCanvas.width,
+    imageCanvas.height,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  return canvas;
+}
+
+export function resizeCanvas(canvasOrig, size) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.height = size.h;
+  canvas.width = size.w;
+
+  ctx.drawImage(
+    canvasOrig,
+    0,
+    0,
+    canvasOrig.width,
+    canvasOrig.height,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  return canvas;
+}
+
+// input: 2x Canvas, output: One new Canvas, resize source
+export function mergeMasks(sourceMask, targetMask) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.height = targetMask.height;
+  canvas.width = targetMask.width;
+
+  ctx.drawImage(targetMask, 0, 0);
+  ctx.drawImage(
+    sourceMask,
+    0,
+    0,
+    sourceMask.width,
+    sourceMask.height,
+    0,
+    0,
+    targetMask.width,
+    targetMask.height
+  );
+
+  return canvas;
+}
+
+// input: source and target {w, h}, output: {x,y,w,h} to fit source nicely into target preserving aspect
+export function resizeAndPadBox(sourceDim, targetDim) {
+  if (sourceDim.h == sourceDim.w) {
+    return { x: 0, y: 0, w: targetDim.w, h: targetDim.h };
+  } else if (sourceDim.h > sourceDim.w) {
+    // portrait => resize and pad left
+    const newW = (sourceDim.w / sourceDim.h) * targetDim.w;
+    const padLeft = Math.floor((targetDim.w - newW) / 2);
+
+    return { x: padLeft, y: 0, w: newW, h: targetDim.h };
+  } else if (sourceDim.h < sourceDim.w) {
+    // landscape => resize and pad top
+    const newH = (sourceDim.h / sourceDim.w) * targetDim.h;
+    const padTop = Math.floor((targetDim.h - newH) / 2);
+
+    return { x: 0, y: padTop, w: targetDim.w, h: newH };
+  }
+}
+
+/** 
+ * input: onnx Tensor [B, *, W, H] and index idx
+ * output: Tensor [B, idx, W, H]
+ **/
+export function sliceTensor(tensor, idx) {
+  const [bs, noMasks, width, height] = tensor.dims;
+  const stride = width * height;
+  const start = stride * idx,
+    end = start + stride;
+
+  return tensor.cpuData.slice(start, end);
+}
+
+/**
+ * input: Float32Array representing ORT.Tensor of shape [1, 1, width, height]
+ * output: HTMLCanvasElement (4 channels, RGBA)
+ **/
+export function float32ArrayToCanvas(array, width, height) {
+  const C = 4; // 4 output channels, RGBA
+  const imageData = new Uint8ClampedArray(array.length * C);
+
+  for (let srcIdx = 0; srcIdx < array.length; srcIdx++) {
+    const trgIdx = srcIdx * C;
+    const maskedPx = array[srcIdx] > 0;
+    imageData[trgIdx] = maskedPx > 0 ? 0x32 : 0;
+    imageData[trgIdx + 1] = maskedPx > 0 ? 0xcd : 0;
+    imageData[trgIdx + 2] = maskedPx > 0 > 0 ? 0x32 : 0;
+    // imageData[trgIdx + 3] = maskedPx > 0 ? 150 : 0 // alpha
+    imageData[trgIdx + 3] = maskedPx > 0 ? 255 : 0; // alpha
+  }
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.height = height;
+  canvas.width = width;
+  ctx.putImageData(new ImageData(imageData, width, height), 0, 0);
+
+  return canvas;
+}
+
+/** 
+ * input: HTMLCanvasElement (RGB)
+ * output: Float32Array for later conversion to ORT.Tensor of shape [1, 3, canvas.width, canvas.height]
+ *  
+ * inspired by: https://onnxruntime.ai/docs/tutorials/web/classify-images-nextjs-github-template.html
+ **/ 
+export function canvasToFloat32Array(canvas) {
+  const imageData = canvas
+    .getContext("2d")
+    .getImageData(0, 0, canvas.width, canvas.height).data;
+  const shape = [1, 3, canvas.width, canvas.height];
+
+  const [redArray, greenArray, blueArray] = [[], [], []];
+
+  for (let i = 0; i < imageData.length; i += 4) {
+    redArray.push(imageData[i]);
+    greenArray.push(imageData[i + 1]);
+    blueArray.push(imageData[i + 2]);
+    // skip data[i + 3] to filter out the alpha channel
+  }
+
+  const transposedData = redArray.concat(greenArray).concat(blueArray);
+
+  let i,
+    l = transposedData.length;
+  const float32Array = new Float32Array(shape[1] * shape[2] * shape[3]);
+  for (i = 0; i < l; i++) {
+    float32Array[i] = transposedData[i] / 255.0; // convert to float
+  }
+
+  return { float32Array, shape };
+}
+
+/** 
+ * input: HTMLCanvasElement (RGB)
+ * output: Float32Array for later conversion to ORT.Tensor of shape [1, 3, canvas.width, canvas.height]
+ *  
+ * inspired by: https://onnxruntime.ai/docs/tutorials/web/classify-images-nextjs-github-template.html
+ **/ 
+export function maskCanvasToFloat32Array(canvas) {
+  const imageData = canvas
+    .getContext("2d")
+    .getImageData(0, 0, canvas.width, canvas.height).data;
+
+  const shape = [1, 1, canvas.width, canvas.height];
+  const float32Array = new Float32Array(shape[1] * shape[2] * shape[3]);
+
+  for (let i = 0; i < float32Array.length; i++) {
+    float32Array[i] = (imageData[i] + imageData[i + 1] + imageData[i + 2]) / (3 * 255.0); // convert avg to float
+  }
+
+  return float32Array;
+}
+</file>
+
+<file path="lib/utils.ts">
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+</file>
+
+</files>

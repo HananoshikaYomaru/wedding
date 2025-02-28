@@ -13,49 +13,52 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+const events = [
+  {
+    date: new Date(2025, 2, 1), // March 1, 2025
+    title: "Save the Date",
+    description: "Save the date cards sent out to all guests",
+  },
+  {
+    date: new Date(2025, 3, 30), // April 30, 2025
+    title: "RSVP Deadline",
+    description: "Please confirm your attendance by this date",
+  },
+  {
+    date: new Date(2025, 5, 2), // July 2, 2025
+    title: "Bridal Shower",
+    description:
+      "For the bridal party and immediate family only. This is a temporary date, we will confirm the final date closer to the wedding.",
+    tbd: true,
+  },
+  {
+    date: new Date(2025, 6, 2), // July 2, 2025
+    title: "Bachelor Party",
+    description:
+      "For the groom and his friends. This is a temporary date, we will confirm the final date closer to the wedding.",
+    tbd: true,
+  },
+  {
+    date: new Date(2025, 6, 3), // July 3, 2025
+    title: "Rehearsal Dinner",
+    description:
+      "For wedding party and immediate family only. This is a temporary date, we will confirm the final date closer to the wedding.",
+    tbd: true,
+  },
+  {
+    date: new Date(2025, 6, 6), // July 6, 2025
+    title: "Wedding Day",
+    description: "Ceremony at 5:30 PM, Reception to follow at 7:30 PM",
+  },
+  {
+    date: new Date(2025, 6, 7), // July 7, 2025
+    title: "Honey Moon 🍯",
+    description: "We're off to the Zurich, Switzerland 🇨🇭!",
+  },
+];
+
 export default function EventCalendar() {
   const [date, setDate] = useState<Date | undefined>(new Date(2025, 6, 6)); // July 6, 2025
-
-  const events = [
-    {
-      date: new Date(2025, 2, 1), // March 1, 2025
-      title: "Save the Date",
-      description: "Save the date cards sent out to all guests",
-    },
-    {
-      date: new Date(2025, 3, 1), // May 1, 2025
-      title: "RSVP Deadline",
-      description: "Please confirm your attendance by this date",
-    },
-    {
-      date: new Date(2025, 5, 2), // July 2, 2025
-      title: "Bridal Shower",
-      description:
-        "For the bridal party and immediate family only. This is a temporary date, we will confirm the final date closer to the wedding.",
-    },
-    {
-      date: new Date(2025, 6, 2), // July 2, 2025
-      title: "Bachelor Party",
-      description:
-        "For the groom and his friends. This is a temporary date, we will confirm the final date closer to the wedding.",
-    },
-    {
-      date: new Date(2025, 6, 3), // July 3, 2025
-      title: "Rehearsal Dinner",
-      description:
-        "For wedding party and immediate family only. This is a temporary date, we will confirm the final date closer to the wedding.",
-    },
-    {
-      date: new Date(2025, 6, 6), // July 6, 2025
-      title: "Wedding Day",
-      description: "Ceremony at 5:30 PM, Reception to follow at 7:30 PM",
-    },
-    {
-      date: new Date(2025, 6, 7), // July 7, 2025
-      title: "Honey Moon 🍯",
-      description: "We're off to the Zurich, Switzerland 🇨🇭!",
-    },
-  ];
 
   // Find the selected event
   const selectedEvent = events.find(
@@ -125,7 +128,8 @@ export default function EventCalendar() {
                     {selectedEvent.title}
                   </h3>
                   <p className="text-[#6d6d6d] mb-2">
-                    {format(selectedEvent.date, "MMMM d, yyyy")}
+                    {format(selectedEvent.date, "MMMM d, yyyy")}{" "}
+                    {selectedEvent.tbd && <span>(TBD)</span>}
                   </p>
                   <p className="text-[#6d6d6d]">{selectedEvent.description}</p>
                 </div>
@@ -163,7 +167,8 @@ export default function EventCalendar() {
                     {event.title}
                   </h4>
                   <p className="text-sm text-[#6d6d6d]">
-                    {format(event.date, "MMMM d, yyyy")}
+                    {format(event.date, "MMMM d, yyyy")}{" "}
+                    {event.tbd && <span className="text-[#d3b8a3]">(TBD)</span>}
                   </p>
                 </div>
               </button>

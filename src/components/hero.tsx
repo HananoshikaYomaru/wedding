@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation } from "motion/react";
 import { Heart } from "lucide-react";
 
-export default function Hero() {
+const DraggableHearts = () => {
   const [hearts, setHearts] = useState<
     { id: number; x: number; y: number; rotation: number }[]
   >([]);
@@ -31,8 +30,8 @@ export default function Hero() {
       hearts.map((heart) =>
         heart.id === id
           ? { ...heart, x: heart.x + info.offset.x, y: heart.y + info.offset.y }
-          : heart
-      )
+          : heart,
+      ),
     );
   };
 
@@ -47,7 +46,41 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
+    <div>
+      {hearts.map((heart) => (
+        <motion.div
+          key={heart.id}
+          drag
+          // dragConstraints={{ left: 0, right: 400, top: 0, bottom: 150 }}
+          onDragStart={() => handleDragStart(heart.id)}
+          onDragEnd={(_, info) => handleDragEnd(info, heart.id)}
+          initial={{ x: heart.x, y: heart.y, rotate: heart.rotation }}
+          animate={{
+            x: heart.x,
+            y: heart.y,
+            rotate: heart.rotation,
+            scale: draggingHeart === heart.id ? 1.2 : 1,
+          }}
+          className="absolute cursor-grab active:cursor-grabbing"
+          style={{ x: heart.x, y: heart.y }}
+        >
+          <Heart size={32} className="text-[#d1837b] fill-[#e5a199] " />
+        </motion.div>
+      ))}
+
+      <button
+        onClick={addHeart}
+        className="absolute bottom-2 right-2 text-sm text-[#d3b8a3] hover:text-[#c09a7e]"
+      >
+        Add Heart
+      </button>
+    </div>
+  );
+};
+
+export default function Hero() {
+  return (
+    <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden ">
       <div className="absolute inset-0 z-0">
         <img
           src={`${import.meta.env.BASE_URL}/placeholder.svg?height=1080&width=1920`}
@@ -74,33 +107,7 @@ export default function Hero() {
           Drag the hearts around or tap to add more!
         </p>
 
-        {hearts.map((heart) => (
-          <motion.div
-            key={heart.id}
-            drag
-            dragConstraints={{ left: 0, right: 400, top: 0, bottom: 150 }}
-            onDragStart={() => handleDragStart(heart.id)}
-            onDragEnd={(_, info) => handleDragEnd(info, heart.id)}
-            initial={{ x: heart.x, y: heart.y, rotate: heart.rotation }}
-            animate={{
-              x: heart.x,
-              y: heart.y,
-              rotate: heart.rotation,
-              scale: draggingHeart === heart.id ? 1.2 : 1,
-            }}
-            className="absolute cursor-grab active:cursor-grabbing"
-            style={{ x: heart.x, y: heart.y }}
-          >
-            <Heart size={32} className="text-[#e5a199] fill-[#e5a199]" />
-          </motion.div>
-        ))}
-
-        <button
-          onClick={addHeart}
-          className="absolute bottom-2 right-2 text-sm text-[#d3b8a3] hover:text-[#c09a7e]"
-        >
-          Add Heart
-        </button>
+        <DraggableHearts />
       </div>
     </section>
   );

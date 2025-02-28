@@ -7,9 +7,11 @@ import RootLayout from './layout.tsx'
 import { scan } from "react-scan"; // must be imported before React and React DOM
 
 
-scan({
-  enabled: true,
-});
+if (import.meta.env.DEV) {
+  scan({
+    enabled: true,
+  });
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

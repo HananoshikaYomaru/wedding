@@ -61,7 +61,7 @@ const DraggableHearts = () => {
             rotate: heart.rotation,
             scale: draggingHeart === heart.id ? 1.2 : 1,
           }}
-          className="absolute cursor-grab active:cursor-grabbing"
+          className="absolute cursor-grab active:cursor-grabbing z-10"
           style={{ x: heart.x, y: heart.y }}
         >
           <Heart size={32} className="text-[#d1837b] fill-[#e5a199] " />

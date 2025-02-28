@@ -1,6 +1,14 @@
-import { useState } from "react";
-import { X } from "lucide-react";
-import "react-photo-album/masonry.css";
+import { useState, useCallback, useEffect } from "react";
+import {
+  X,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import "./photo-gallery.css";
 
 type Photo = {
   src: string;
@@ -57,61 +65,193 @@ const Lightbox = ({
   selectedImage: number;
   setSelectedImage: (index: number | null) => void;
 }) => {
+  const handlePrevious = useCallback(() => {
+    setSelectedImage(selectedImage > 0 ? selectedImage - 1 : null);
+  }, [setSelectedImage, selectedImage]);
+
+  const handleNext = useCallback(() => {
+    setSelectedImage(
+      selectedImage < photos.length - 1 ? selectedImage + 1 : null,
+    );
+  }, [setSelectedImage, selectedImage, photos.length]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") handlePrevious();
+      if (e.key === "ArrowRight") handleNext();
+      if (e.key === "Escape") setSelectedImage(null);
+    },
+    [handlePrevious, handleNext, setSelectedImage],
+  );
+
+  // Add event listener for keyboard navigation
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+    <div className="lightbox">
       <button
-        className="absolute top-4 right-4 text-white hover:text-gray-300"
+        className="lightbox-close-button"
         onClick={() => setSelectedImage(null)}
       >
         <X size={32} />
       </button>
 
-      <div className="flex flex-col items-center justify-center">
-        <div className="relative w-full max-w-3xl max-h-[80vh] aspect-[3/4]">
-          <img
-            src={photos[selectedImage].src || "/placeholder.svg"}
-            alt={photos[selectedImage].alt}
-            className="object-contain h-full"
-          />
-        </div>
-        <p className="text-white text-lg font-medium  transition-opacity duration-300">
+      <div className="lightbox-container">
+        <TransformWrapper
+          initialScale={1}
+          minScale={0.5}
+          maxScale={4}
+          centerOnInit
+          wheel={{ wheelDisabled: false }}
+          doubleClick={{ disabled: false }}
+          panning={{ disabled: false }}
+        >
+          {({ zoomIn, zoomOut, resetTransform }) => (
+            <>
+              <div className="lightbox-image-container">
+                <TransformComponent>
+                  <img
+                    src={photos[selectedImage].src || "/placeholder.svg"}
+                    alt={photos[selectedImage].alt}
+                    style={{
+                      maxHeight: "100%",
+                      maxWidth: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                </TransformComponent>
+              </div>
+              <div className="zoom-controls">
+                <button onClick={() => zoomIn()} className="zoom-button">
+                  <ZoomIn size={20} />
+                </button>
+                <button onClick={() => zoomOut()} className="zoom-button">
+                  <ZoomOut size={20} />
+                </button>
+                <button
+                  onClick={() => resetTransform()}
+                  className="zoom-button"
+                >
+                  <RotateCw size={20} />
+                </button>
+              </div>
+            </>
+          )}
+        </TransformWrapper>
+
+        <p className="lightbox-description">
           {photos[selectedImage].description}
         </p>
+
+        <div className="lightbox-controls">
+          <button
+            className="lightbox-nav-button"
+            onClick={handlePrevious}
+            disabled={selectedImage === 0}
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            className="lightbox-nav-button"
+            onClick={handleNext}
+            disabled={selectedImage === photos.length - 1}
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
       </div>
+    </div>
+  );
+};
+
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) => {
+  return (
+    <div className="pagination">
+      <button
+        className="pagination-button"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        <ChevronLeft size={16} />
+      </button>
+
+      <span className="pagination-current">
+        {currentPage} / {totalPages}
+      </span>
+
+      <button
+        className="pagination-button"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        <ChevronRight size={16} />
+      </button>
     </div>
   );
 };
 
 export default function PhotoGallery() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const photosPerPage = 6;
+
+  // Calculate total pages
+  const totalPages = Math.ceil(photos.length / photosPerPage);
+
+  // Get current photos
+  const indexOfLastPhoto = currentPage * photosPerPage;
+  const indexOfFirstPhoto = indexOfLastPhoto - photosPerPage;
+  const currentPhotos = photos.slice(indexOfFirstPhoto, indexOfLastPhoto);
+
+  // Change page
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
-    <section className="py-20 px-4 z-[5] bg-white">
-      <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-serif text-center text-[#3d3d3d] mb-16">
-          Our Journey Together
-        </h2>
+    <section className="photo-gallery-section">
+      <div className="photo-gallery-container">
+        <h2 className="photo-gallery-title">Our Journey Together</h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {photos.map((photo, index) => (
+        <div className="photo-gallery-grid">
+          {currentPhotos.map((photo, index) => (
             <div
               key={index}
-              className="aspect-[3/4] relative overflow-hidden rounded-lg cursor-pointer group"
-              onClick={() => setSelectedImage(index)}
+              className="photo-item"
+              onClick={() => setSelectedImage(indexOfFirstPhoto + index)}
             >
               <img
                 src={photo.src || `${import.meta.env.BASE_URL}/placeholder.svg`}
                 alt={photo.alt}
-                className="object-cover transition-transform duration-300 group-hover:scale-110 h-full"
+                className="photo-image"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black opacity-0 bg-opacity-50 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <p className="text-white text-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  View Photo
-                </p>
+              <div className="photo-overlay">
+                <p className="photo-view-text">View Photo</p>
               </div>
             </div>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
 
         {selectedImage !== null && (
           <Lightbox

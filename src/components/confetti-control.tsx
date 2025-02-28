@@ -15,7 +15,7 @@ export const ConfettiControl = () => {
   const { y } = useWindowScroll();
 
   // Hide confetti when scrolled past the first viewport
-  const isVisible = y < height;
+  const isVisible = y < height * 0.7;
 
   const getConfettiColors = () => {
     switch (currentMode) {

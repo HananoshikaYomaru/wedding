@@ -23,46 +23,118 @@ export class SAM2 {
     this.bufferDecoder = await this.downloadModel(DECODER_URL);
   }
 
+  // async downloadModel(url) {
+  //   // step 1: check if cached
+  //   let root = await navigator.storage.getDirectory();
+  //   console.log(root);
+  //   const filename = path.basename(url);
+
+  //   let fileHandle = await root
+  //     .getFileHandle(filename)
+  //     .catch((e) => console.error("File does not exist:", filename, e));
+
+  //   if (fileHandle) {
+  //     let file = await fileHandle.getFile();
+  //     if (file.size > 0) return await file.arrayBuffer();
+  //   }
+
+  //   // step 2: download if not cached
+  //   // console.log("File " + filename + " not in cache, downloading from " + url);
+  //   console.log("File not in cache, downloading from " + url);
+  //   let buffer = null;
+  //   try {
+  //     buffer = await fetch(url, {
+  //       headers: new Headers({
+  //         Origin: location.origin,
+  //       }),
+  //       mode: "cors",
+  //     }).then((response) => response.arrayBuffer());
+  //   } catch (e) {
+  //     console.error("Download of " + url + " failed: ", e);
+  //     return null;
+  //   }
+
+  //   // step 3: store
+  //   try {
+  //     const fileHandle = await root.getFileHandle(filename, { create: true });
+  //     console.log(fileHandle);
+  //     if (!fileHandle) {
+  //       console.error("Failed to create file handle for " + filename);
+  //       return null;
+  //     }
+
+  //     // Get a synchronous access handle
+  //     const accessHandle = await fileHandle.createSyncAccessHandle();
+
+  //     // console.log(fileHandle.createWritable);
+  //     // if (!fileHandle.createWritable) {
+  //     //   console.error("Failed to create writable for " + filename);
+  //     //   return null;
+  //     // }
+
+  //     // const writable = await fileHandle.createWritable();
+  //     // await writable.write(buffer);
+  //     // await writable.close();
+
+  //     accessHandle.write(buffer, { at: 0 });
+  //     accessHandle.close();
+
+  //     console.log("Stored " + filename);
+  //   } catch (e) {
+  //     console.error("Storage of " + filename + " failed: ", e);
+  //   }
+
+  //   return buffer;
+  // }
+
+  // In a Web Worker
+
   async downloadModel(url) {
-    // step 1: check if cached
+    // Step 1: Check if cached
     const root = await navigator.storage.getDirectory();
-    const filename = path.basename(url);
+    const filename = url.split("/").pop().split("?")[0]; // Simple basename alternative
 
-    let fileHandle = await root
-      .getFileHandle(filename)
-      .catch((e) => console.error("File does not exist:", filename, e));
-
-    if (fileHandle) {
+    let fileHandle;
+    try {
+      fileHandle = await root.getFileHandle(filename);
       const file = await fileHandle.getFile();
-      if (file.size > 0) return await file.arrayBuffer();
+      if (file.size > 0) {
+        console.log(`Found cached file: ${filename}`);
+        return await file.arrayBuffer();
+      }
+    } catch (e) {
+      console.log(`File ${filename} not cached: ${e.message}`);
     }
 
-    // step 2: download if not cached
-    // console.log("File " + filename + " not in cache, downloading from " + url);
-    console.log("File not in cache, downloading from " + url);
-    let buffer = null;
+    // Step 2: Download if not cached
+    console.log(`Downloading ${filename} from ${url}`);
+    let buffer;
     try {
-      buffer = await fetch(url, {
-        headers: new Headers({
-          Origin: location.origin,
-        }),
+      const response = await fetch(url, {
         mode: "cors",
-      }).then((response) => response.arrayBuffer());
+        headers: new Headers({
+          Origin: self.location.origin,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+      buffer = await response.arrayBuffer();
     } catch (e) {
-      console.error("Download of " + url + " failed: ", e);
+      console.error(`Download of ${url} failed: ${e.message}`);
       return null;
     }
 
-    // step 3: store
+    // Step 3: Store
     try {
       const fileHandle = await root.getFileHandle(filename, { create: true });
-      const writable = await fileHandle.createWritable();
-      await writable.write(buffer);
-      await writable.close();
-
-      console.log("Stored " + filename);
+      const accessHandle = await fileHandle.createSyncAccessHandle();
+      accessHandle.write(buffer, { at: 0 });
+      accessHandle.close();
+      console.log(`Stored ${filename} in OPFS`);
     } catch (e) {
-      console.error("Storage of " + filename + " failed: ", e);
+      console.error(`Storage of ${filename} failed: ${e.message}`);
+      return null; // Consistent return on storage failure
     }
 
     return buffer;
@@ -139,21 +211,21 @@ export class SAM2 {
     console.log({
       flatPoints,
       flatLabels,
-      masks
+      masks,
     });
 
-    let mask_input, has_mask_input
+    let mask_input, has_mask_input;
     if (masks) {
-      mask_input = masks
-      has_mask_input = new ort.Tensor("float32", [1], [1])
+      mask_input = masks;
+      has_mask_input = new ort.Tensor("float32", [1], [1]);
     } else {
       // dummy data
       mask_input = new ort.Tensor(
         "float32",
         new Float32Array(256 * 256),
         [1, 1, 256, 256]
-      )
-      has_mask_input = new ort.Tensor("float32", [0], [1])
+      );
+      has_mask_input = new ort.Tensor("float32", [0], [1]);
     }
 
     const inputs = {

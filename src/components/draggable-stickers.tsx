@@ -21,6 +21,8 @@ const INITIAL_SCALE_RANGE = 4;
 const UPDATE_SCALE_RANGE = 6;
 const UPDATE_ROTATION_RANGE = 30;
 
+const DEFAULT_WIDTH = 1920;
+
 export const DraggableStickers = () => {
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [draggingSticker, setDraggingSticker] = useState<number | null>(null);
@@ -58,11 +60,13 @@ export const DraggableStickers = () => {
       ...stickers,
       {
         id: stickers.length,
-        x: Math.random() * (width * 0.6) + width * 0.2,
-        y: Math.random() * (height * 0.1) + height * 0.2,
+        // +- 100
+        x: -100 + Math.random() * 200,
+        y: -100 + Math.random() * 200,
         rotation: Math.random() * INITIAL_ROTATION - INITIAL_ROTATION / 2,
-        // scale: Math.random() * INITIAL_SCALE_RANGE + BASIC_SCALE,
-        scale: 1,
+        scale:
+          (Math.random() * INITIAL_SCALE_RANGE + BASIC_SCALE) *
+          (width / DEFAULT_WIDTH),
         type: "image",
         imageSrc: imageUrl,
       },
@@ -71,14 +75,16 @@ export const DraggableStickers = () => {
 
   const handleClick = (id: number) => {
     setStickers(
-      stickers.map((sticker) =>
+      [...stickers].map((sticker) =>
         sticker.id === id
           ? {
               ...sticker,
               rotation:
                 Math.random() * UPDATE_ROTATION_RANGE -
                 UPDATE_ROTATION_RANGE / 2,
-              scale: Math.random() * UPDATE_SCALE_RANGE + BASIC_SCALE,
+              scale:
+                (Math.random() * UPDATE_SCALE_RANGE + BASIC_SCALE) *
+                (width / DEFAULT_WIDTH),
             }
           : sticker,
       ),
@@ -103,7 +109,7 @@ export const DraggableStickers = () => {
             x: sticker.x,
             y: sticker.y,
             rotate: sticker.rotation,
-            scale: draggingSticker === sticker.id ? 1.2 : 1,
+            scale: sticker.scale * (draggingSticker === sticker.id ? 1.2 : 1),
           }}
           className="sticker img-sticker"
           alt="Custom sticker"

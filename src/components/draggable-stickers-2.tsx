@@ -32,13 +32,17 @@ const INITIAL_SCALE_RANGE = 4;
 const UPDATE_SCALE_RANGE = 6;
 const UPDATE_ROTATION_RANGE = 30;
 
+const DEFAULT_WIDTH = 1920;
+
 const createInitialSticker = (index: number, width: number, height: number) => {
   return {
     id: index,
     x: Math.random() * (width * 0.6) + width * 0.2,
     y: Math.random() * (height * 0.2) + height * 0.6,
     rotation: Math.random() * INITIAL_ROTATION - INITIAL_ROTATION / 2,
-    scale: Math.random() * INITIAL_SCALE_RANGE + BASIC_SCALE,
+    scale:
+      (Math.random() * INITIAL_SCALE_RANGE + BASIC_SCALE) *
+      (width / DEFAULT_WIDTH),
     imageSrc: predefinedImages[index],
   };
 };
@@ -83,11 +87,13 @@ export const DraggableStickers2 = () => {
   const handleClick = (id: number) => {
     // randomly change the position and scale
     setStickers(
-      stickers.map((sticker) =>
+      [...stickers].map((sticker) =>
         sticker.id === id
           ? {
               ...sticker,
-              scale: Math.random() * UPDATE_SCALE_RANGE + BASIC_SCALE,
+              scale:
+                (Math.random() * UPDATE_SCALE_RANGE + BASIC_SCALE) *
+                (width / DEFAULT_WIDTH),
               rotation:
                 Math.random() * UPDATE_ROTATION_RANGE -
                 UPDATE_ROTATION_RANGE / 2,

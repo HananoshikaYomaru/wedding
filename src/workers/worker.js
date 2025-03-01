@@ -38,22 +38,23 @@ self.onmessage = async (e) => {
     const durationMs = performance.now() - startTime;
     stats.encodeImageTimes.push(durationMs);
 
+    console.log("encodeImageDone", durationMs);
     self.postMessage({
       type: "encodeImageDone",
       data: { durationMs: durationMs },
     });
     self.postMessage({ type: "stats", data: stats });
   } else if (type === "decodeMask") {
-    const {points, maskArray, maskShape} = data;
+    const { points, maskArray, maskShape } = data;
 
     const startTime = performance.now();
 
-    let decodingResults 
+    let decodingResults;
     if (maskArray) {
       const maskTensor = new Tensor("float32", maskArray, maskShape);
-      decodingResults = await sam.decode(points, maskTensor); 
+      decodingResults = await sam.decode(points, maskTensor);
     } else {
-      decodingResults = await sam.decode(points); 
+      decodingResults = await sam.decode(points);
     }
     // decodingResults = Tensor [B=1, Masks, W, H]
 

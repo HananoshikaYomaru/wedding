@@ -1,25 +1,14 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import InputDialog from "@/components/ui/inputdialog";
-import {
-  resizeCanvas,
-  maskImageCanvas,
-  resizeAndPadBox,
-  canvasToFloat32Array,
-  float32ArrayToCanvas,
-  sliceTensor,
-} from "@/lib/imageutils";
-// import { imageSize, useSamWorker,  } from "./page";
+import { maskImageCanvas, resizeAndPadBox } from "@/lib/imageutils";
 
 import { LoaderCircle, ImageUp, ImageDown, Github, Fan } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { imageSize, useSamWorker } from "./use-sam-worker";
 
-// resize+pad all images to 1024x1024
-export const imageSize = { w: 1024, h: 1024 };
-export const maskSize = { w: 256, h: 256 };
-
-type Status =
+export type Status =
   | "Encode image"
   | "Loading model"
   | "Ready. Click on image"
@@ -28,7 +17,7 @@ type Status =
   | "Error (check JS console)";
 
 type ActionButtonsProps = {
-  encodeImageClick: () => void;
+  // encodeImageClick: () => void;
   loading: boolean;
   imageEncoded: boolean;
   status: Status;
@@ -40,7 +29,7 @@ type ActionButtonsProps = {
 
 // Component for the action buttons
 export const ActionButtons = ({
-  encodeImageClick,
+  // encodeImageClick,
   loading,
   imageEncoded,
   status,
@@ -51,15 +40,15 @@ export const ActionButtons = ({
 }: ActionButtonsProps) => {
   // as soon as status is "Ready. we encode the image
 
-  useEffect(() => {
-    if (status === "Encode image") {
-      encodeImageClick();
-    }
-  }, [status, encodeImageClick]);
+  // useEffect(() => {
+  //   if (status === "Encode image") {
+  //     encodeImageClick();
+  //   }
+  // }, [status, encodeImageClick]);
 
   return (
     <div className="flex justify-between gap-4">
-      <Button onClick={encodeImageClick} disabled={loading || imageEncoded}>
+      <Button disabled>
         <p className="flex items-center gap-2">
           {loading && <LoaderCircle className="animate-spin w-6 h-6" />}
           {status}
@@ -118,83 +107,6 @@ export const ImageCanvas = ({
   </div>
 );
 
-export const useSamWorker = ({
-  handleDecodingResults,
-}: {
-  handleDecodingResults: (decodingResults: {
-    masks: { dims: number[]; cpuData: Float32Array };
-    iou_predictions: { dims: number[]; cpuData: number[] };
-  }) => void;
-}) => {
-  // web worker, image and mask
-  const samWorker = useRef<Worker | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [device, setDevice] = useState(null);
-  const [status, setStatus] = useState<Status>("Loading model");
-  const [imageEncoded, setImageEncoded] = useState(false);
-  const [stats, setStats] = useState(null);
-
-  // Handle web worker messages
-  const onWorkerMessage = (event: MessageEvent) => {
-    const { type, data } = event.data;
-
-    if (type == "pong") {
-      const { success, device } = data;
-
-      if (success) {
-        setLoading(false);
-        setDevice(device);
-        setStatus("Encode image");
-      } else {
-        setStatus("Error (check JS console)");
-      }
-    } else if (type == "downloadInProgress" || type == "loadingInProgress") {
-      setLoading(true);
-      setStatus("Loading model");
-    } else if (type == "encodeImageDone") {
-      // alert(data.durationMs)
-      setImageEncoded(true);
-      setLoading(false);
-      setStatus("Ready. Click on image");
-    } else if (type == "decodeMaskResult") {
-      handleDecodingResults(data);
-      setLoading(false);
-      setStatus("Ready. Click on image");
-    } else if (type == "stats") {
-      setStats(data);
-    }
-  };
-
-  // Load web worker
-  useEffect(() => {
-    if (!samWorker.current) {
-      samWorker.current = new Worker(
-        new URL(`../workers/worker.js`, import.meta.url),
-        {
-          type: "module",
-        },
-      );
-      samWorker.current.addEventListener("message", onWorkerMessage);
-      samWorker.current.postMessage({ type: "ping" });
-
-      setLoading(true);
-    }
-  }, [onWorkerMessage, handleDecodingResults]);
-
-  return {
-    samWorker,
-    loading,
-    device,
-    status,
-    imageEncoded,
-    stats,
-    setLoading,
-    setStatus,
-    setImageEncoded,
-    setStats,
-  };
-};
-
 const inputDialogDefaultURL =
   "https://upload.wikimedia.org/wikipedia/commons/9/96/Pro_Air_Martin_404_N255S.jpg";
 
@@ -203,68 +115,28 @@ type SamEditorProps = {
 };
 
 export function SamEditor({ onImageCropped }: SamEditorProps) {
-  // state
-
-  // const [imageEncoded, setImageEncoded] = useState(false);
-
-  // Decoding finished -> parse result and update mask
-  const handleDecodingResults = (decodingResults: {
-    masks: { dims: number[]; cpuData: Float32Array };
-    iou_predictions: { dims: number[]; cpuData: number[] };
-  }) => {
-    // SAM2 returns 3 mask along with scores -> select best one
-    const maskTensors = decodingResults.masks;
-    const [bs, noMasks, width, height] = maskTensors.dims;
-    const maskScores = decodingResults.iou_predictions.cpuData;
-    const bestMaskIdx = maskScores.indexOf(Math.max(...maskScores));
-    const bestMaskArray = sliceTensor(maskTensors, bestMaskIdx);
-    let bestMaskCanvas = float32ArrayToCanvas(bestMaskArray, width, height);
-    bestMaskCanvas = resizeCanvas(bestMaskCanvas, imageSize);
-
-    setMask(bestMaskCanvas);
-    setPrevMaskArray(bestMaskArray);
-  };
-
   const {
-    samWorker,
     loading,
-    device,
     status,
     imageEncoded,
-    stats,
-    setLoading,
-    setStatus,
-    setImageEncoded,
-    setStats,
-  } = useSamWorker({ handleDecodingResults });
+    maskCanvas,
+    encodeImage,
+    decodeMask,
+    reset,
+  } = useSamWorker();
 
-  const [image, setImage] = useState<HTMLCanvasElement | null>(null); // canvas
-  const [mask, setMask] = useState<HTMLCanvasElement | null>(null); // canvas
-  const [prevMaskArray, setPrevMaskArray] = useState<Float32Array | null>(null); // Float32Array
+  const [imageCanvas, setImage] = useState<HTMLCanvasElement | null>(null); // canvas
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const fileInputEl = useRef<HTMLInputElement>(null);
-  const pointsRef = useRef<{ x: number; y: number; label: number }[]>([]);
-
-  // const [stats, setStats] = useState(null);
   // input dialog for custom URLs
   const [inputDialogOpen, setInputDialogOpen] = useState(false);
 
-  // Start encoding image
-  const encodeImageClick = async () => {
-    if (!samWorker.current) return;
-    if (!image) return;
-    samWorker.current.postMessage({
-      type: "encodeImage",
-      data: canvasToFloat32Array(resizeCanvas(image, imageSize)),
-    });
-
-    setLoading(true);
-    setStatus("Encoding");
-  };
-
   // Start decoding, prompt with mouse coords
   const imageClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!imageEncoded) return;
+    if (!imageEncoded) {
+      console.log("image not encoded");
+      return;
+    }
 
     event.preventDefault();
     console.log(event.button);
@@ -278,11 +150,6 @@ export function SamEditor({ onImageCropped }: SamEditorProps) {
       console.log("no event target");
       return;
     }
-    if (samWorker.current == null) {
-      console.log("no sam worker");
-      return;
-    }
-
     const rect = (event.target as HTMLElement).getBoundingClientRect();
 
     // input image will be resized to 1024x1024 -> normalize mouse pos to 1024x1024
@@ -291,62 +158,27 @@ export function SamEditor({ onImageCropped }: SamEditorProps) {
       y: ((event.clientY - rect.top) / canvas.height) * imageSize.h,
       label: event.button === 0 ? 1 : 0,
     };
-    pointsRef.current.push(point);
 
-    // do we have a mask already? ie. a refinement click?
-    if (prevMaskArray) {
-      const maskShape = [1, 1, maskSize.w, maskSize.h];
-
-      samWorker.current.postMessage({
-        type: "decodeMask",
-        data: {
-          points: pointsRef.current,
-          maskArray: prevMaskArray,
-          maskShape: maskShape,
-        },
-      });
-    } else {
-      samWorker.current.postMessage({
-        type: "decodeMask",
-        data: {
-          points: pointsRef.current,
-          maskArray: null,
-          maskShape: null,
-        },
-      });
-    }
-
-    setLoading(true);
-    setStatus("Decoding");
+    decodeMask(point);
   };
 
   // Crop image with mask
   const cropClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    if (!image || !mask) return;
-    // const link = document.createElement("a");
-    // link.href = maskImageCanvas(image, mask).toDataURL();
-    // link.download = "crop.png";
+    if (!imageCanvas || !maskCanvas) return;
 
-    // document.body.appendChild(link);
-    // link.click();
-    // document.body.removeChild(link);
-
-    const url = maskImageCanvas(image, mask).toDataURL();
+    const url = maskImageCanvas(imageCanvas, maskCanvas).toDataURL();
     onImageCropped(url);
   };
 
   // Reset all the image-based state: points, mask, offscreen canvases ..
   const resetState = () => {
-    pointsRef.current = [];
     setImage(null);
-    setMask(null);
-    setPrevMaskArray(null);
-    setImageEncoded(false);
+    reset();
   };
 
   // New image: From File
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       console.log("no files");
       return;
@@ -355,113 +187,98 @@ export function SamEditor({ onImageCropped }: SamEditorProps) {
     const dataURL = window.URL.createObjectURL(file);
 
     resetState();
-    setStatus("Encode image");
-    setImageOnCanvas(dataURL);
+    const canvas = await getCanvasFromImageUrl(dataURL);
+    setImage(canvas);
+    await encodeImage(canvas);
   };
 
   // New image: From URL
-  const handleUrl = (urlText: string) => {
+  const handleUrl = async (urlText: string) => {
     const dataURL = urlText;
 
     resetState();
-    setStatus("Encode image");
-    setImageOnCanvas(dataURL);
+    const canvas = await getCanvasFromImageUrl(dataURL);
+    setImage(canvas);
+    await encodeImage(canvas);
   };
 
-  function handleRequestStats() {
-    if (!samWorker.current) return;
-    samWorker.current.postMessage({ type: "stats" });
-  }
+  const getCanvasFromImageUrl: (
+    imageUrl: string,
+  ) => Promise<HTMLCanvasElement> = async (imageUrl: string) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageUrl;
 
-  const setImageOnCanvas = (imageUrl: string) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = imageUrl;
-    img.onload = function () {
-      const largestDim =
-        img.naturalWidth > img.naturalHeight
-          ? img.naturalWidth
-          : img.naturalHeight;
-      const box = resizeAndPadBox(
-        { h: img.naturalHeight, w: img.naturalWidth },
-        { h: largestDim, w: largestDim },
-      );
+      img.onload = function () {
+        const largestDim = Math.max(img.naturalWidth, img.naturalHeight);
 
-      if (!box) {
-        console.log("no box");
-        return;
-      }
+        const box = resizeAndPadBox(
+          { h: img.naturalHeight, w: img.naturalWidth },
+          { h: largestDim, w: largestDim },
+        );
 
-      const canvas = document.createElement("canvas");
-      canvas.width = largestDim;
-      canvas.height = largestDim;
+        if (!box) {
+          console.log("no box");
+          reject(new Error("Failed to create box dimensions"));
+          return;
+        }
 
-      (canvas.getContext("2d") as CanvasRenderingContext2D).drawImage(
-        img,
-        0,
-        0,
-        img.naturalWidth,
-        img.naturalHeight,
-        box.x,
-        box.y,
-        box.w,
-        box.h,
-      );
-      setImage(canvas);
-    };
+        const canvas = document.createElement("canvas");
+        canvas.width = largestDim;
+        canvas.height = largestDim;
+
+        const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          img.naturalWidth,
+          img.naturalHeight,
+          box.x,
+          box.y,
+          box.w,
+          box.h,
+        );
+
+        resolve(canvas);
+      };
+
+      img.onerror = function () {
+        reject(new Error("Failed to load image"));
+      };
+    });
   };
 
   useEffect(() => {
-    setImageOnCanvas(
-      "https://upload.wikimedia.org/wikipedia/commons/3/38/Flamingos_Laguna_Colorada.jpg",
-    );
+    const getImage = async () => {
+      const canvas = await getCanvasFromImageUrl(
+        "https://upload.wikimedia.org/wikipedia/commons/3/38/Flamingos_Laguna_Colorada.jpg",
+      );
+      setImage(canvas);
+      await encodeImage(canvas);
+    };
+    getImage();
   }, []);
 
   // Offscreen canvas changed, draw it
   useEffect(() => {
-    if (image && canvasEl.current) {
-      drawImageWithoutMask(canvasEl.current, image);
+    if (imageCanvas && canvasEl.current) {
+      drawImage(canvasEl.current, imageCanvas, maskCanvas ?? undefined);
     }
-  }, [image]);
-
-  const drawImageWithoutMask = (
-    canvas: HTMLCanvasElement,
-    image: HTMLCanvasElement,
-  ) => {
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(
-      image,
-      0,
-      0,
-      image.width,
-      image.height,
-      0,
-      0,
-      canvas.width,
-      canvas.height,
-    );
-  };
-
-  // Mask changed, draw original image and mask on top with some alpha
-  useEffect(() => {
-    if (mask && image && canvasEl.current) {
-      drawImage(canvasEl.current, image, mask);
-    }
-  }, [mask, image]);
+  }, [imageCanvas, maskCanvas]);
 
   const drawImage = (
     canvas: HTMLCanvasElement,
     image: HTMLCanvasElement,
-    mask: HTMLCanvasElement,
+    mask?: HTMLCanvasElement,
   ) => {
     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-    if (!image) {
-      console.log("no image");
-      return;
-    }
+    // Clear canvas first
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Draw the base image
     ctx.drawImage(
       image,
       0,
@@ -473,34 +290,39 @@ export function SamEditor({ onImageCropped }: SamEditorProps) {
       canvas.width,
       canvas.height,
     );
-    ctx.globalAlpha = 0.7;
-    ctx.drawImage(
-      mask,
-      0,
-      0,
-      mask.width,
-      mask.height,
-      0,
-      0,
-      canvas.width,
-      canvas.height,
-    );
-    ctx.globalAlpha = 1;
+
+    // If mask is provided, draw it on top with alpha
+    if (mask) {
+      ctx.globalAlpha = 0.7;
+      ctx.drawImage(
+        mask,
+        0,
+        0,
+        mask.width,
+        mask.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+      );
+      ctx.globalAlpha = 1;
+    }
   };
   // {/* <GitHubButton /> */}
   // {/* <Header device={device} /> */}
   return (
     <div className="flex flex-col gap-4 pt-4">
       <ActionButtons
-        encodeImageClick={encodeImageClick}
+        // encodeImageClick={encodeImageClick}
         loading={loading}
         imageEncoded={imageEncoded}
         status={status}
         fileInputEl={fileInputEl}
         setInputDialogOpen={setInputDialogOpen}
         cropClick={cropClick}
-        mask={mask}
+        mask={maskCanvas}
       />
+      {String(imageEncoded)}
       <ImageCanvas canvasEl={canvasEl} imageClick={imageClick} />
       <InputDialog
         open={inputDialogOpen}
@@ -521,4 +343,12 @@ export function SamEditor({ onImageCropped }: SamEditorProps) {
   //   handleRequestStats={handleRequestStats}
   //   stats={stats}
   // /> */}
+}
+
+// Assuming this is your resizeAndPadBox function's type definition
+interface Box {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
 }

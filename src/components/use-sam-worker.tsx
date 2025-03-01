@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { create } from "zustand";
 import { Status } from "./sam-editor";
 import {
@@ -92,6 +92,7 @@ export const useSamWorker = () => {
   };
 
   const loadWorker = async () => {
+    // setSamWorker(null);
     if (!samWorker) {
       console.log("loading worker");
       const worker = new Worker(
@@ -116,33 +117,17 @@ export const useSamWorker = () => {
         worker.postMessage({ type: "ping" });
       });
 
-      setSamWorker(worker);
-      return await workerReadyPromise;
+      const w = await workerReadyPromise;
+      setSamWorker(w);
+      return w;
     }
     return samWorker;
   };
 
-  /**
-   * this function can only be called when the worker is loaded
-   */
-  // const ping = useCallback(() => {
-  //   if (!samWorker) return;
-  //   samWorker.postMessage({ type: "ping" });
-  // }, [samWorker]);
-
-  // Load web worker
-  // useEffect(() => {
-  //   return () => {
-  //     if (samWorker) {
-  //       samWorker.removeEventListener("message", onWorkerMessage);
-  //       // samWorker.terminate();
-  //     }
-  //   };
-  // }, []);
-
   // Start encoding image
   const encodeImage = async (image: HTMLCanvasElement) => {
     const worker = await loadWorker();
+    if (!worker) return;
 
     console.log("encoding image");
     worker.postMessage({
@@ -195,7 +180,12 @@ export const useSamWorker = () => {
     setPrevMaskArray(null);
     setMask(null);
     setLoading(false);
-    setStatus("Encode image");
+    setStatus("Loading model");
+    if (samWorker) {
+      samWorker.removeEventListener("message", onWorkerMessage);
+      samWorker.terminate();
+      setSamWorker(null);
+    }
   }
 
   return {

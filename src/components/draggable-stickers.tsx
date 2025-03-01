@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { Image } from "lucide-react";
 import { ImageUploadDialog, ImageUploadDialog2 } from "./image-upload-dialog";
-
+import { useWindowSize } from "react-use";
 // Type definitions
 export type Sticker = {
   id: number;
@@ -10,13 +10,22 @@ export type Sticker = {
   y: number;
   rotation: number;
   type: "heart" | "image";
+  scale: number;
   imageSrc?: string;
 };
+
+const BASIC_SCALE = 1.5;
+const INITIAL_ROTATION = 30;
+const INITIAL_SCALE_RANGE = 4;
+
+const UPDATE_SCALE_RANGE = 6;
+const UPDATE_ROTATION_RANGE = 30;
 
 export const DraggableStickers = () => {
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [draggingSticker, setDraggingSticker] = useState<number | null>(null);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const { width, height } = useWindowSize();
 
   const handleStickerDragStart = (id: number) => {
     setDraggingSticker(id);
@@ -44,8 +53,36 @@ export const DraggableStickers = () => {
     setShowUploadDialog(true);
   };
 
-  const addImageSticker = (sticker: Sticker) => {
-    setStickers([...stickers, sticker]);
+  const addImageSticker = (imageUrl: string) => {
+    setStickers([
+      ...stickers,
+      {
+        id: stickers.length,
+        x: Math.random() * (width * 0.6) + width * 0.2,
+        y: Math.random() * (height * 0.1) + height * 0.2,
+        rotation: Math.random() * INITIAL_ROTATION - INITIAL_ROTATION / 2,
+        // scale: Math.random() * INITIAL_SCALE_RANGE + BASIC_SCALE,
+        scale: 1,
+        type: "image",
+        imageSrc: imageUrl,
+      },
+    ]);
+  };
+
+  const handleClick = (id: number) => {
+    setStickers(
+      stickers.map((sticker) =>
+        sticker.id === id
+          ? {
+              ...sticker,
+              rotation:
+                Math.random() * UPDATE_ROTATION_RANGE -
+                UPDATE_ROTATION_RANGE / 2,
+              scale: Math.random() * UPDATE_SCALE_RANGE + BASIC_SCALE,
+            }
+          : sticker,
+      ),
+    );
   };
 
   return (
@@ -60,6 +97,7 @@ export const DraggableStickers = () => {
           onDragEnd={(_: any, info: any) =>
             handleStickerDragEnd(info, sticker.id)
           }
+          onClick={() => handleClick(sticker.id)}
           initial={{ x: sticker.x, y: sticker.y, rotate: sticker.rotation }}
           animate={{
             x: sticker.x,
@@ -77,7 +115,7 @@ export const DraggableStickers = () => {
         Add Sticker
       </button>
       <ImageUploadDialog2
-        onStickerCreated={addImageSticker}
+        onImageCreated={addImageSticker}
         isOpen={showUploadDialog}
         onClose={() => setShowUploadDialog(false)}
       />

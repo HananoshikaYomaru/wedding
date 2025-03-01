@@ -35,28 +35,20 @@ export type Point = {
 // use the sam-editor component to create a sticker
 
 type ImageUploadDialog2Props = {
-  onStickerCreated: (sticker: Sticker) => void;
+  onImageCreated: (imageUrl: string) => void;
   isOpen: boolean;
   onClose: () => void;
 };
 
 export const ImageUploadDialog2 = ({
-  onStickerCreated,
+  onImageCreated,
   isOpen,
   onClose,
 }: ImageUploadDialog2Props) => {
   const imageToSticker = (imageUrl: string) => {
     // Create the sticker
-    const newSticker: Sticker = {
-      id: Date.now(),
-      x: Math.random() * 200 + 100,
-      y: Math.random() * 100 + 50,
-      rotation: Math.random() * 30 - 15,
-      type: "image",
-      imageSrc: imageUrl,
-    };
 
-    onStickerCreated(newSticker);
+    onImageCreated(imageUrl);
 
     onClose();
   };
@@ -66,7 +58,7 @@ export const ImageUploadDialog2 = ({
         <DialogHeader>
           <DialogTitle>Create Your Sticker</DialogTitle>
         </DialogHeader>
-        <SamEditor onImageCropped={imageToSticker} />
+        <SamEditor onImageCropped={imageToSticker} opened={isOpen} />
       </DialogContent>
     </Dialog>
   );

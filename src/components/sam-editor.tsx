@@ -112,9 +112,10 @@ const inputDialogDefaultURL =
 
 type SamEditorProps = {
   onImageCropped: (imageUrl: string) => void;
+  opened: boolean;
 };
 
-export function SamEditor({ onImageCropped }: SamEditorProps) {
+export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
   const {
     loading,
     status,
@@ -249,6 +250,13 @@ export function SamEditor({ onImageCropped }: SamEditorProps) {
       };
     });
   };
+
+  useEffect(() => {
+    console.log("opened", opened);
+    if (!opened) {
+      reset();
+    }
+  }, [opened]);
 
   useEffect(() => {
     const getImage = async () => {

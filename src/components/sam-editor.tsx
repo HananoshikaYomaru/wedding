@@ -47,39 +47,55 @@ export const ActionButtons = ({
   // }, [status, encodeImageClick]);
 
   return (
-    <div className="flex justify-between gap-4">
-      <Button disabled>
-        <p className="flex items-center gap-2">
-          {loading && <LoaderCircle className="animate-spin w-6 h-6" />}
-          {status}
-        </p>
-      </Button>
-      <div className="flex gap-1">
-        <Button
-          onClick={() => {
-            if (!fileInputEl.current) {
-              console.log("no file input");
-              return;
-            }
-            fileInputEl.current.click();
-          }}
-          variant="secondary"
-          disabled={loading}
-        >
-          <ImageUp /> Upload
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-between gap-4">
+        <Button disabled>
+          <p className="flex items-center gap-2">
+            {loading && <LoaderCircle className="animate-spin w-6 h-6" />}
+            {status}
+          </p>
         </Button>
-        <Button
-          onClick={() => {
-            setInputDialogOpen(true);
-          }}
-          variant="secondary"
-          disabled={loading}
-        >
-          <ImageUp /> From URL
-        </Button>
-        <Button onClick={cropClick} disabled={mask == null} variant="secondary">
-          <ImageDown /> Crop
-        </Button>
+        <div className="flex gap-1">
+          <Button
+            onClick={() => {
+              if (!fileInputEl.current) {
+                console.log("no file input");
+                return;
+              }
+              fileInputEl.current.click();
+            }}
+            variant="secondary"
+            disabled={loading}
+          >
+            <ImageUp /> Upload
+          </Button>
+          <Button
+            onClick={() => {
+              setInputDialogOpen(true);
+            }}
+            variant="secondary"
+            disabled={loading}
+          >
+            <ImageUp /> From URL
+          </Button>
+          <Button
+            onClick={cropClick}
+            disabled={mask == null}
+            variant="secondary"
+          >
+            <ImageDown /> Crop
+          </Button>
+        </div>
+      </div>
+      <div className="selection-instructions">
+        <div className="instruction-item">
+          <span className="dot positive-dot"></span>
+          <span>Left click to select area (positive selection)</span>
+        </div>
+        <div className="instruction-item">
+          <span className="dot negative-dot"></span>
+          <span>Right click to exclude area (negative selection)</span>
+        </div>
       </div>
     </div>
   );
@@ -92,20 +108,72 @@ export const ImageCanvas = ({
 }: {
   canvasEl: React.RefObject<HTMLCanvasElement | null>;
   imageClick: (event: React.MouseEvent<HTMLCanvasElement>) => void;
-}) => (
-  <div className="flex justify-center">
-    <canvas
-      ref={canvasEl}
-      width={512}
-      height={512}
-      onClick={imageClick}
-      onContextMenu={(event) => {
-        event.preventDefault();
-        imageClick(event);
-      }}
-    />
-  </div>
-);
+}) => {
+  const [points, setPoints] = useState<
+    Array<{ x: number; y: number; type: "positive" | "negative" }>
+  >([]);
+
+  const handleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvasEl.current) return;
+
+    const rect = canvasEl.current.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Add point to the array
+    setPoints((prev) => [
+      ...prev,
+      {
+        x,
+        y,
+        type: event.button === 0 ? "positive" : "negative",
+      },
+    ]);
+
+    // Call the original click handler
+    imageClick(event);
+  };
+
+  // Draw points on canvas overlay
+  useEffect(() => {
+    if (!canvasEl.current) return;
+
+    const canvas = canvasEl.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Draw points after a small delay to ensure the main canvas has been updated
+    const timer = setTimeout(() => {
+      points.forEach((point) => {
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = point.type === "positive" ? "#00ff00" : "#ff9900";
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [points, canvasEl]);
+
+  return (
+    <div className="flex justify-center canvas-container">
+      <canvas
+        ref={canvasEl}
+        width={512}
+        height={512}
+        onClick={handleClick}
+        onContextMenu={(event) => {
+          event.preventDefault();
+          handleClick(event);
+        }}
+        className="segmentation-canvas"
+      />
+    </div>
+  );
+};
 
 const inputDialogDefaultURL =
   "https://upload.wikimedia.org/wikipedia/commons/9/96/Pro_Air_Martin_404_N255S.jpg";
@@ -316,12 +384,10 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
       ctx.globalAlpha = 1;
     }
   };
-  // {/* <GitHubButton /> */}
-  // {/* <Header device={device} /> */}
+
   return (
-    <div className="flex flex-col gap-4 pt-4">
+    <div className="flex flex-col gap-4 pt-4 sam-editor">
       <ActionButtons
-        // encodeImageClick={encodeImageClick}
         loading={loading}
         imageEncoded={imageEncoded}
         status={status}
@@ -330,7 +396,6 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
         cropClick={cropClick}
         mask={maskCanvas}
       />
-      {String(imageEncoded)}
       <ImageCanvas canvasEl={canvasEl} imageClick={imageClick} />
       <InputDialog
         open={inputDialogOpen}
@@ -347,10 +412,6 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
       />
     </div>
   );
-  // {/* <StatsSection
-  //   handleRequestStats={handleRequestStats}
-  //   stats={stats}
-  // /> */}
 }
 
 // Assuming this is your resizeAndPadBox function's type definition

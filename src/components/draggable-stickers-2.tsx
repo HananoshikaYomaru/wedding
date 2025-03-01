@@ -1,16 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, memo } from "react";
 import { motion } from "motion/react";
 import "./hero.css";
 import { useWindowSize } from "react-use";
+import type { PanInfo } from "motion/react";
 
 // Type definitions
 export type Sticker = {
   id: number;
+  imageSrc: string;
+};
+
+export type StickerMetadata = {
+  id: number;
   x: number;
   y: number;
-  scale: number;
   rotation: number;
-  imageSrc: string;
+  scale: number;
 };
 
 // Predefined sticker images
@@ -34,98 +39,106 @@ const UPDATE_ROTATION_RANGE = 30;
 
 const DEFAULT_WIDTH = 1920;
 
-const createInitialSticker = (index: number, width: number, height: number) => {
-  return {
-    id: index,
-    x: Math.random() * (width * 0.6) + width * 0.2,
-    y: Math.random() * (height * 0.2) + height * 0.6,
-    rotation: Math.random() * INITIAL_ROTATION - INITIAL_ROTATION / 2,
-    scale:
-      (Math.random() * INITIAL_SCALE_RANGE + BASIC_SCALE) *
-      (width / DEFAULT_WIDTH),
-    imageSrc: predefinedImages[index],
-  };
-};
+// Individual sticker component to prevent unnecessary re-renders
+const StickerItem = memo(
+  ({
+    sticker,
+    width,
+    height,
+  }: {
+    sticker: Sticker;
+    width: number;
+    height: number;
+  }) => {
+    const [data, setData] = useState<StickerMetadata>({
+      id: sticker.id,
+      x: Math.random() * (width * 0.6) + width * 0.2,
+      y: Math.random() * (height * 0.2) + height * 0.6,
+      rotation: Math.random() * INITIAL_ROTATION - INITIAL_ROTATION / 2,
+      scale:
+        (Math.random() * INITIAL_SCALE_RANGE + BASIC_SCALE) *
+        (width / DEFAULT_WIDTH),
+    });
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleClick = () => {
+      if (isDragging) return;
+      setData((data) => ({
+        ...data,
+        rotation:
+          Math.random() * UPDATE_ROTATION_RANGE - UPDATE_ROTATION_RANGE / 2,
+        scale:
+          (Math.random() * UPDATE_SCALE_RANGE + BASIC_SCALE) *
+          (width / DEFAULT_WIDTH),
+      }));
+    };
+
+    const handleDragEnd = (
+      event: MouseEvent | TouchEvent | PointerEvent,
+      info: PanInfo,
+    ) => {
+      setIsDragging(false);
+      setData((data) => ({
+        ...data,
+        x: data.x + info.offset.x,
+        y: data.y + info.offset.y,
+      }));
+    };
+
+    const handleDragStart = (
+      event: MouseEvent | TouchEvent | PointerEvent,
+      info: PanInfo,
+    ) => {
+      setIsDragging(true);
+    };
+
+    return (
+      <motion.img
+        key={data.id}
+        drag
+        dragMomentum={false}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onClick={handleClick}
+        initial={{ x: data.x, y: data.y, rotate: data.rotation }}
+        animate={{
+          x: data.x,
+          y: data.y,
+          rotate: data.rotation,
+          scale: data.scale * (isDragging ? 1.2 : 1),
+        }}
+        className="sticker image-sticker"
+        alt="Sticker"
+        src={sticker.imageSrc}
+      />
+    );
+  },
+);
+
+StickerItem.displayName = "StickerItem";
 
 export const DraggableStickers2 = () => {
   const [stickers, setStickers] = useState<Sticker[]>([]);
-  const [draggingSticker, setDraggingSticker] = useState<number | null>(null);
-
   const { width, height } = useWindowSize();
 
   // Create initial stickers
   useEffect(() => {
-    // Create all stickers initially with random size and position
-    const initialStickers = predefinedImages.map((image, index) =>
-      createInitialSticker(index, width, height),
-    );
+    // Create all stickers initially
+    const initialStickers = predefinedImages.map((imageSrc, index) => ({
+      id: index,
+      imageSrc,
+    }));
     setStickers(initialStickers);
   }, []);
 
-  const handleStickerDragStart = (id: number) => {
-    setDraggingSticker(id);
-  };
-
-  const handleStickerDragEnd = (
-    info: { offset: { x: number; y: number } },
-    id: number,
-  ) => {
-    setDraggingSticker(null);
-    setStickers(
-      stickers.map((sticker) =>
-        sticker.id === id
-          ? {
-              ...sticker,
-              x: sticker.x + info.offset.x,
-              y: sticker.y + info.offset.y,
-            }
-          : sticker,
-      ),
-    );
-  };
-
-  const handleClick = (id: number) => {
-    // randomly change the position and scale
-    setStickers(
-      [...stickers].map((sticker) =>
-        sticker.id === id
-          ? {
-              ...sticker,
-              scale:
-                (Math.random() * UPDATE_SCALE_RANGE + BASIC_SCALE) *
-                (width / DEFAULT_WIDTH),
-              rotation:
-                Math.random() * UPDATE_ROTATION_RANGE -
-                UPDATE_ROTATION_RANGE / 2,
-            }
-          : sticker,
-      ),
-    );
-  };
-
   return (
     <>
-      {/* Predefined Image Stickers */}
       {stickers.map((sticker) => (
-        <motion.img
+        <StickerItem
           key={sticker.id}
-          drag
-          dragMomentum={false}
-          onDragStart={() => handleStickerDragStart(sticker.id)}
-          onDragEnd={(_: any, info: any) =>
-            handleStickerDragEnd(info, sticker.id)
-          }
-          onClick={() => handleClick(sticker.id)}
-          initial={{ x: sticker.x, y: sticker.y, rotate: sticker.rotation }}
-          animate={{
-            x: sticker.x,
-            y: sticker.y,
-            rotate: sticker.rotation,
-            scale: sticker.scale * (draggingSticker === sticker.id ? 1.2 : 1),
-          }}
-          className="sticker image-sticker"
-          alt="Sticker"
-          src={sticker.imageSrc}
+          sticker={sticker}
+          width={width}
+          height={height}
         />
       ))}
     </>

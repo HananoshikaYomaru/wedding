@@ -8,7 +8,7 @@ import { scan } from "react-scan"; // must be imported before React and React DO
 
 if (import.meta.env.DEV) {
   scan({
-    enabled: false,
+    enabled: true,
   });
 }
 

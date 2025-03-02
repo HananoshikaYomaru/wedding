@@ -35,8 +35,9 @@ export default function ImportantInfo() {
             <h3 className="text-xl font-medium text-[#3d3d3d] mb-2">
               Location
             </h3>
-            <p className="text-[#6d6d6d]">Vancouver Botanical Garden</p>
-            <p className="text-[#6d6d6d] mt-1">Vancouver, BC</p>
+            <p className="text-[#6d6d6d]">University Golf Club</p>
+            <p className="text-[#6d6d6d]">5185 University Blvd</p>
+            <p className="text-[#6d6d6d]">Vancouver, BC V6T 1X5</p>
           </div>
         </div>
 

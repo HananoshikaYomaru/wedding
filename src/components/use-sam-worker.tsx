@@ -146,8 +146,6 @@ export const useSamWorker = () => {
       data: canvasToFloat32Array(resizeCanvas(image, imageSize)),
     });
 
-    console.log("image encoded");
-
     // setLoading(true);
     // setStatus("Encoding");
   };

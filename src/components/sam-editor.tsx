@@ -154,6 +154,54 @@ type SamEditorProps = {
   opened: boolean;
 };
 
+export const getCanvasFromImageUrl: (
+  imageUrl: string,
+) => Promise<HTMLCanvasElement> = async (imageUrl: string) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = imageUrl;
+
+    img.onload = function () {
+      const largestDim = Math.max(img.naturalWidth, img.naturalHeight);
+
+      const box = resizeAndPadBox(
+        { h: img.naturalHeight, w: img.naturalWidth },
+        { h: largestDim, w: largestDim },
+      );
+
+      if (!box) {
+        console.log("no box");
+        reject(new Error("Failed to create box dimensions"));
+        return;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = largestDim;
+      canvas.height = largestDim;
+
+      const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        img.naturalWidth,
+        img.naturalHeight,
+        box.x,
+        box.y,
+        box.w,
+        box.h,
+      );
+
+      resolve(canvas);
+    };
+
+    img.onerror = function () {
+      reject(new Error("Failed to load image"));
+    };
+  });
+};
+
 export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
   const {
     loading,
@@ -232,9 +280,11 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
     const dataURL = window.URL.createObjectURL(file);
 
     resetState();
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
     const canvas = await getCanvasFromImageUrl(dataURL);
     setImage(canvas);
-    await encodeImage(canvas);
+    // await encodeImage(canvas);
   };
 
   // New image: From URL
@@ -244,59 +294,10 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
     resetState();
     const canvas = await getCanvasFromImageUrl(dataURL);
     setImage(canvas);
-    await encodeImage(canvas);
-  };
-
-  const getCanvasFromImageUrl: (
-    imageUrl: string
-  ) => Promise<HTMLCanvasElement> = async (imageUrl: string) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.src = imageUrl;
-
-      img.onload = function () {
-        const largestDim = Math.max(img.naturalWidth, img.naturalHeight);
-
-        const box = resizeAndPadBox(
-          { h: img.naturalHeight, w: img.naturalWidth },
-          { h: largestDim, w: largestDim }
-        );
-
-        if (!box) {
-          console.log("no box");
-          reject(new Error("Failed to create box dimensions"));
-          return;
-        }
-
-        const canvas = document.createElement("canvas");
-        canvas.width = largestDim;
-        canvas.height = largestDim;
-
-        const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-        ctx.drawImage(
-          img,
-          0,
-          0,
-          img.naturalWidth,
-          img.naturalHeight,
-          box.x,
-          box.y,
-          box.w,
-          box.h
-        );
-
-        resolve(canvas);
-      };
-
-      img.onerror = function () {
-        reject(new Error("Failed to load image"));
-      };
-    });
+    // await encodeImage(canvas);
   };
 
   useEffect(() => {
-    console.log("opened", opened);
     if (!opened) {
       reset();
     }
@@ -305,7 +306,9 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
   useEffect(() => {
     const getImage = async () => {
       const canvas = await getCanvasFromImageUrl(
-        `${import.meta.env.BASE_URL}/gallery/2024-halloween.jpeg`
+        // `${import.meta.env.BASE_URL}/gallery/2024-halloween.jpeg`
+        // "https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/2023-halloween_xj0gwe.webp",
+        `https://res.cloudinary.com/yomaru/image/upload/v1740902617/manlung-wedding/2024-halloween_ru7hxg.webp`,
       );
       setImage(canvas);
       await encodeImage(canvas);
@@ -320,7 +323,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
         canvasEl.current,
         imageCanvas,
         maskCanvas ?? undefined,
-        pointsCanvas ?? undefined
+        pointsCanvas ?? undefined,
       );
     }
   }, [imageCanvas, maskCanvas, pointsCanvas]);
@@ -329,7 +332,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
     canvas: HTMLCanvasElement,
     image: HTMLCanvasElement,
     mask?: HTMLCanvasElement,
-    points?: HTMLCanvasElement
+    points?: HTMLCanvasElement,
   ) => {
     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -346,7 +349,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
       0,
       0,
       canvas.width,
-      canvas.height
+      canvas.height,
     );
 
     // If mask is provided, draw it on top with alpha
@@ -361,7 +364,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
         0,
         0,
         canvas.width,
-        canvas.height
+        canvas.height,
       );
       ctx.globalAlpha = 1;
     }
@@ -393,6 +396,16 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
     }
   };
 
+  useEffect(() => {
+    if (!imageEncoded && imageCanvas) {
+      console.log("image not encoded");
+      // encode image
+      encodeImage(imageCanvas);
+      return;
+    }
+    console.log("image encoded");
+  }, [imageCanvas]);
+
   return (
     <div className="flex flex-col gap-4 pt-4 sam-editor">
       <ActionButtons
@@ -404,6 +417,8 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
         cropClick={cropClick}
         mask={maskCanvas}
       />
+      {import.meta.env.DEV && String(imageEncoded)}
+
       <ImageCanvas canvasEl={canvasEl} imageClick={imageClick} />
       <InputDialog
         open={inputDialogOpen}

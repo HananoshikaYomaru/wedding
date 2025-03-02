@@ -7,7 +7,10 @@ export default function Hero() {
   // check the user agent, if browser is chrome or edge, show interactive container
 
   return (
-    <section className="relative h-screen flex flex-col items-center justify-center ">
+    <section
+      className="z-10 relative h-screen flex flex-col items-center justify-center overflow-x-hidden overflow-y-hidden"
+      style={{}}
+    >
       <div className="absolute inset-0 z-0">
         <img
           src={`${import.meta.env.BASE_URL}/pergola-1-04-20-24_50_2569-172192616930787.webp`}
@@ -40,7 +43,7 @@ const InteractiveContainer = () => {
   const isChromeOrEdge = /chrome|edge/i.test(navigator.userAgent);
 
   return (
-    <div className=" z-10  mt-12 w-full max-w-md h-48 border-2 border-dashed border-[#d3b8a3] rounded-lg flex items-center justify-center bg-white/50 backdrop-blur-sm">
+    <div className=" z-10  mt-12 w-full max-w-sm md:max-w-md h-36 md:h-48 border-2 border-dashed border-[#d3b8a3] rounded-lg flex items-center justify-center bg-white/50 backdrop-blur-sm ">
       <div className="absolute top-2 left-0 right-0 text-center text-[#6d6d6d] text-sm">
         <p className="mb-2">
           Drag hearts around or add more stickers! Click on the stickers to
@@ -51,7 +54,7 @@ const InteractiveContainer = () => {
         )}
       </div>
 
-      <div className="interactive-container">
+      <div className="interactive-container max-w-screen ">
         <div className="w-full h-full relative">
           <div className="arrow-indicator">
             <svg

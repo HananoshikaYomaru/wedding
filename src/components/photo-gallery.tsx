@@ -12,57 +12,131 @@ import "./photo-gallery.css";
 
 type Photo = {
   src: string;
-  description: string;
-  alt: string;
+  description?: string;
+  /**
+   * if no alt is provided, the description will be used as the alt text
+   */
+  alt?: string;
 };
 
-// https://app1.sharemyimage.com/2025/01/08/1FEEEABB-9EF6-46DA-9AC8-7ABCAA681D33_4_5005_c.jpeg
-// https://app1.sharemyimage.com/2025/01/08/1FE052E4-EFEB-4AE7-95D0-5315F76A95D4_4_5005_c.jpeg
-// https://app1.sharemyimage.com/2025/01/08/1F521EE7-1FFE-4A13-A7E4-2AE5FBBAA7BF_4_5005_c.jpeg
-// https://app1.sharemyimage.com/2025/01/08/1F6BBE3F-3FCE-4908-879E-906624E34D96_4_5005_c.jpeg
-// https://app1.sharemyimage.com/2025/01/08/1E565CC3-6A69-4E01-A811-47A6F5BD8E72_4_5005_c.jpeg
-// https://app1.sharemyimage.com/2025/01/08/1AE6B095-5318-4524-B643-3002F2E55031_4_5005_c.jpeg
+// public/gallery/2023-halloween.JPG
+// public/gallery/2024-christmas.jpeg
+// public/gallery/2024-halloween.jpeg
+// public/gallery/2024-manlung-bd.jpeg
+// public/gallery/2024-winter.jpeg
+// public/gallery/blue-pink.JPG
+// public/gallery/bridge-fun.JPG
+// public/gallery/bridge-hug.JPG
+// public/gallery/bridge-selfie.JPG
+// public/gallery/bridge-sidehead.JPG
+// public/gallery/confess-book-of-love.JPG
+// public/gallery/confess.JPG
+// public/gallery/dingding-hongkong.JPG
+// public/gallery/disney.jpg
+// public/gallery/go-steady.jpeg
+// public/gallery/graduation.jpg
+// public/gallery/hong-kong-sunset.jpg
+// public/gallery/hongkong-seashore.jpg
+// public/gallery/japan-bridge.JPG
+// public/gallery/natalie-bd.JPG
+// public/gallery/northern-light.jpeg
+// public/gallery/propose-hug.JPG
+// public/gallery/propose-success.JPG
+// public/gallery/propose.jpg
+// public/gallery/riding-horse.jpeg
+// public/gallery/ring.jpeg
+// public/gallery/triple-date.JPG
+// public/gallery/vancouver-sakura.JPG
 
 const photos: Photo[] = [
   {
-    src: `https://app1.sharemyimage.com/2025/01/08/1FEEEABB-9EF6-46DA-9AC8-7ABCAA681D33_4_5005_c.jpeg`,
-    description: "Couple photo 1",
-    alt: "Couple photo 1",
+    src: `${import.meta.env.BASE_URL}/gallery/2023-halloween.JPG`,
+    description: "Having fun in Halloween 2023 with Vancouver campus ministry",
   },
   {
-    src: `https://app1.sharemyimage.com/2025/01/08/1FE052E4-EFEB-4AE7-95D0-5315F76A95D4_4_5005_c.jpeg`,
-    description: "Couple photo 2",
-    alt: "Couple photo 2",
+    src: `${import.meta.env.BASE_URL}/gallery/2024-christmas.jpeg`,
+    description: "Vandusen Garden Christmas 2024",
   },
   {
-    src: `https://app1.sharemyimage.com/2025/01/08/1F521EE7-1FFE-4A13-A7E4-2AE5FBBAA7BF_4_5005_c.jpeg`,
-    description: "Couple photo 3",
-    alt: "Couple photo 3",
+    src: `${import.meta.env.BASE_URL}/gallery/2024-halloween.jpeg`,
+    description: "Halloween 2024 with Vancouver campus ministry",
   },
   {
-    src: `https://app1.sharemyimage.com/2025/01/08/1F6BBE3F-3FCE-4908-879E-906624E34D96_4_5005_c.jpeg`,
-    description: "Couple photo 4",
-    alt: "Couple photo 4",
+    src: `${import.meta.env.BASE_URL}/gallery/2024-manlung-bd.jpeg`,
+    description: "Man Lung's birthday 2024",
   },
   {
-    src: `https://app1.sharemyimage.com/2025/01/08/1E565CC3-6A69-4E01-A811-47A6F5BD8E72_4_5005_c.jpeg`,
-    description: "Couple photo 5",
-    alt: "Couple photo 5",
+    src: `${import.meta.env.BASE_URL}/gallery/2024-winter.jpeg`,
+    description: "We are playing snow in Winter 2024",
   },
   {
-    src: `https://app1.sharemyimage.com/2025/01/08/1AE6B095-5318-4524-B643-3002F2E55031_4_5005_c.jpeg`,
-    description: "Couple photo 6",
-    alt: "Couple photo 6",
+    src: `${import.meta.env.BASE_URL}/gallery/blue-pink.JPG`,
   },
   {
-    src: `https://app1.sharemyimage.com/2025/01/08/1E565CC3-6A69-4E01-A811-47A6F5BD8E72_4_5005_c.jpeg`,
-    description: "Couple photo 5",
-    alt: "Couple photo 5",
+    src: `${import.meta.env.BASE_URL}/gallery/bridge-fun.JPG`,
   },
   {
-    src: `https://app1.sharemyimage.com/2025/01/08/1AE6B095-5318-4524-B643-3002F2E55031_4_5005_c.jpeg`,
-    description: "Couple photo 6",
-    alt: "Couple photo 6",
+    src: `${import.meta.env.BASE_URL}/gallery/bridge-hug.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/bridge-selfie.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/bridge-sidehead.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/confess-book-of-love.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/confess.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/dingding-hongkong.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/disney.jpg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/go-steady.jpeg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/graduation.jpg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/hong-kong-sunset.jpg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/hongkong-seashore.jpg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/japan-bridge.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/natalie-bd.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/northern-light.jpeg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/propose-hug.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/propose-success.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/propose.jpg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/riding-horse.jpeg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/ring.jpeg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/triple-date.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/vancouver-sakura.JPG`,
   },
 ];
 
@@ -250,7 +324,7 @@ export default function PhotoGallery() {
                 }
               }}
               role="button"
-              aria-label={`View ${photo.alt}`}
+              aria-label={photo.alt ? `View ${photo.alt}` : photo.description}
             >
               <img
                 src={photo.src || `${import.meta.env.BASE_URL}/placeholder.svg`}

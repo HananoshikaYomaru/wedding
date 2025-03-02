@@ -109,26 +109,12 @@ export const ImageCanvas = ({
   canvasEl: React.RefObject<HTMLCanvasElement | null>;
   imageClick: (event: React.MouseEvent<HTMLCanvasElement>) => void;
 }) => {
-  const [points, setPoints] = useState<
-    Array<{ x: number; y: number; type: "positive" | "negative" }>
-  >([]);
-
   const handleClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasEl.current) return;
 
     const rect = canvasEl.current.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-
-    // Add point to the array
-    setPoints((prev) => [
-      ...prev,
-      {
-        x,
-        y,
-        type: event.button === 0 ? "positive" : "negative",
-      },
-    ]);
 
     // Call the original click handler
     imageClick(event);
@@ -141,22 +127,7 @@ export const ImageCanvas = ({
     const canvas = canvasEl.current;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
-    // Draw points after a small delay to ensure the main canvas has been updated
-    const timer = setTimeout(() => {
-      points.forEach((point) => {
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = point.type === "positive" ? "#00ff00" : "#ff9900";
-        ctx.fill();
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      });
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, [points, canvasEl]);
+  }, [canvasEl]);
 
   return (
     <div className="flex justify-center canvas-container">
@@ -192,6 +163,8 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
     encodeImage,
     decodeMask,
     reset,
+    pointsCanvas,
+    pointsRef,
   } = useSamWorker();
 
   const [imageCanvas, setImage] = useState<HTMLCanvasElement | null>(null); // canvas
@@ -201,7 +174,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
   const [inputDialogOpen, setInputDialogOpen] = useState(false);
 
   // Start decoding, prompt with mouse coords
-  const imageClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const imageClick = async (event: React.MouseEvent<HTMLCanvasElement>) => {
     if (!imageEncoded) {
       console.log("image not encoded");
       return;
@@ -209,6 +182,9 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
 
     event.preventDefault();
     console.log(event.button);
+
+    const x = event.clientX;
+    const y = event.clientY;
 
     const canvas = canvasEl.current;
     if (!canvas) {
@@ -223,12 +199,12 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
 
     // input image will be resized to 1024x1024 -> normalize mouse pos to 1024x1024
     const point = {
-      x: ((event.clientX - rect.left) / canvas.width) * imageSize.w,
-      y: ((event.clientY - rect.top) / canvas.height) * imageSize.h,
+      x: ((x - rect.left) / canvas.width) * imageSize.w,
+      y: ((y - rect.top) / canvas.height) * imageSize.h,
       label: event.button === 0 ? 1 : 0,
     };
 
-    decodeMask(point);
+    await decodeMask(point);
   };
 
   // Crop image with mask
@@ -340,14 +316,20 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
   // Offscreen canvas changed, draw it
   useEffect(() => {
     if (imageCanvas && canvasEl.current) {
-      drawImage(canvasEl.current, imageCanvas, maskCanvas ?? undefined);
+      drawImage(
+        canvasEl.current,
+        imageCanvas,
+        maskCanvas ?? undefined,
+        pointsCanvas ?? undefined,
+      );
     }
-  }, [imageCanvas, maskCanvas]);
+  }, [imageCanvas, maskCanvas, pointsCanvas]);
 
   const drawImage = (
     canvas: HTMLCanvasElement,
     image: HTMLCanvasElement,
     mask?: HTMLCanvasElement,
+    points?: HTMLCanvasElement,
   ) => {
     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -382,6 +364,32 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
         canvas.height,
       );
       ctx.globalAlpha = 1;
+    }
+
+    // Draw points directly on the main canvas instead of the points canvas
+    if (pointsRef.current.length > 0) {
+      pointsRef.current.forEach((point) => {
+        // Scale the points to match the canvas dimensions
+        const scaledX = (point.x / imageSize.w) * canvas.width;
+        const scaledY = (point.y / imageSize.h) * canvas.height;
+
+        // Set point color based on label
+        if (point.label === 1) {
+          ctx.fillStyle = "green";
+        } else {
+          ctx.fillStyle = "orange";
+        }
+
+        // Draw the point
+        ctx.beginPath();
+        ctx.arc(scaledX, scaledY, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Add a border to make points more visible
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
     }
   };
 

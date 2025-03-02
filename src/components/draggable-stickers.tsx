@@ -61,6 +61,7 @@ const StickerItem = memo(
     const [isDragging, setIsDragging] = useState(false);
 
     const handleClick = () => {
+      if (isDragging) return;
       setData((data) => ({
         ...data,
         rotation:

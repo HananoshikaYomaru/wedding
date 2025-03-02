@@ -35,6 +35,13 @@ const handleDecodingResults = (decodingResults: {
   // setPrevMaskArray(bestMaskArray);
 };
 
+const createPointsCanvas = (width: number, height: number) => {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  return canvas;
+};
+
 type SamWorkerStore = {
   samWorker: Worker | null;
   setSamWorker: (samWorker: Worker | null) => void;
@@ -57,6 +64,9 @@ export const useSamWorker = () => {
   const [prevMaskArray, setPrevMaskArray] = useState<Float32Array | null>(null); // Float32Array
   const pointsRef = useRef<{ x: number; y: number; label: number }[]>([]);
   const [maskCanvas, setMask] = useState<HTMLCanvasElement | null>(null); // canvas
+  const [pointsCanvas, setPointsCanvas] = useState<HTMLCanvasElement | null>(
+    null,
+  ); // canvas
 
   // Handle web worker messages
   const onWorkerMessage = (event: MessageEvent) => {
@@ -84,6 +94,7 @@ export const useSamWorker = () => {
       const { bestMaskCanvas, bestMaskArray } = handleDecodingResults(data);
       setMask(bestMaskCanvas);
       setPrevMaskArray(bestMaskArray);
+      setPointsCanvas(createPointsCanvas(imageSize.w, imageSize.h));
       setLoading(false);
       setStatus("Ready. Click on image");
     } else if (type == "stats") {
@@ -199,5 +210,7 @@ export const useSamWorker = () => {
     encodeImage,
     decodeMask,
     reset,
+    pointsCanvas,
+    pointsRef,
   };
 };

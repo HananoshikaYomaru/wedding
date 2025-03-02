@@ -1,3 +1,32 @@
+// https://res.cloudinary.com/yomaru/image/upload/v1740902625/manlung-wedding/graduation_gbmej0.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902624/manlung-wedding/go-steady_l21wfo.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902624/manlung-wedding/riding-horse_udemdb.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902623/manlung-wedding/2024-manlung-bd_uxdeem.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902622/manlung-wedding/confess-book-of-love_lwj4ia.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902621/manlung-wedding/2024-christmas_kiu2ey.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902620/manlung-wedding/2024-winter_nw5yvf.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902619/manlung-wedding/ring_yt2yky.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902619/manlung-wedding/vancouver-sakura_jx0uxf.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902618/manlung-wedding/confess_nmk3z2.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902618/manlung-wedding/japan-bridge_ay19fh.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902617/manlung-wedding/triple-date_q5xtlq.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902617/manlung-wedding/2024-halloween_ru7hxg.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/natalie-bd_s5tzsr.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/blue-pink_oomem8.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/dingding-hongkong_pq9aou.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/propose-success_rcipks.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902615/manlung-wedding/disney_aley5k.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902615/manlung-wedding/bridge-hug_hgkxja.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902614/manlung-wedding/propose-hug_tgvihr.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902614/manlung-wedding/bridge-sidehead_m2ephl.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902613/manlung-wedding/bridge-selfie_smad4d.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902613/manlung-wedding/bridge-fun_hbggd7.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902613/manlung-wedding/northern-light_db0y69.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/hongkong-seashore_kudwui.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/hong-kong-sunset_iph5vo.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/propose_kjyorl.webp
+// https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/2023-halloween_xj0gwe.webp
+
 import { useState, useCallback, useEffect } from "react";
 import {
   X,
@@ -19,126 +48,126 @@ type Photo = {
   alt?: string;
 };
 
-// public/gallery/2023-halloween.JPG
-// public/gallery/2024-christmas.jpeg
-// public/gallery/2024-halloween.jpeg
-// public/gallery/2024-manlung-bd.jpeg
-// public/gallery/2024-winter.jpeg
-// public/gallery/blue-pink.JPG
-// public/gallery/bridge-fun.JPG
-// public/gallery/bridge-hug.JPG
-// public/gallery/bridge-selfie.JPG
-// public/gallery/bridge-sidehead.JPG
-// public/gallery/confess-book-of-love.JPG
-// public/gallery/confess.JPG
-// public/gallery/dingding-hongkong.JPG
-// public/gallery/disney.jpg
-// public/gallery/go-steady.jpeg
-// public/gallery/graduation.jpg
-// public/gallery/hong-kong-sunset.jpg
-// public/gallery/hongkong-seashore.jpg
-// public/gallery/japan-bridge.JPG
-// public/gallery/natalie-bd.JPG
-// public/gallery/northern-light.jpeg
-// public/gallery/propose-hug.JPG
-// public/gallery/propose-success.JPG
-// public/gallery/propose.jpg
-// public/gallery/riding-horse.jpeg
-// public/gallery/ring.jpeg
-// public/gallery/triple-date.JPG
-// public/gallery/vancouver-sakura.JPG
-
 const photos: Photo[] = [
   {
-    src: `${import.meta.env.BASE_URL}/gallery/propose.jpg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/propose.jpg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/propose_kjyorl.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/propose-hug.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/propose-hug.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902614/manlung-wedding/propose-hug_tgvihr.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/propose-success.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/propose-success.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/propose-success_rcipks.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/blue-pink.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/blue-pink.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/blue-pink_oomem8.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/bridge-fun.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/bridge-fun.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902613/manlung-wedding/bridge-fun_hbggd7.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/bridge-hug.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/bridge-hug.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902613/manlung-wedding/bridge-hug_hgkxja.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/2023-halloween.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/2023-halloween.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902617/manlung-wedding/2024-halloween_ru7hxg.webp`,
     description: "Having fun in Halloween 2023 with Vancouver campus ministry",
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/2024-christmas.jpeg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/2024-christmas.jpeg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902617/manlung-wedding/2024-christmas_kiu2ey.webp`,
     description: "Vandusen Garden Christmas 2024",
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/2024-halloween.jpeg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/2024-halloween.jpeg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902617/manlung-wedding/2024-halloween_ru7hxg.webp`,
     description: "Halloween 2024 with Vancouver campus ministry",
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/2024-manlung-bd.jpeg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/2024-manlung-bd.jpeg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902618/manlung-wedding/2024-manlung-bd_uxdeem.webp`,
     description: "Man Lung's birthday 2024",
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/2024-winter.jpeg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/2024-winter.jpeg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902620/manlung-wedding/2024-winter_nw5yvf.webp`,
     description: "We are playing snow in Winter 2024",
   },
 
   {
-    src: `${import.meta.env.BASE_URL}/gallery/bridge-selfie.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/bridge-selfie.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902613/manlung-wedding/bridge-selfie_smad4d.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/bridge-sidehead.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/bridge-sidehead.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902614/manlung-wedding/bridge-sidehead_m2ephl.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/confess-book-of-love.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/confess-book-of-love.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902622/manlung-wedding/confess-book-of-love_lwj4ia.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/confess.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/confess.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902618/manlung-wedding/confess_nmk3z2.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/dingding-hongkong.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/dingding-hongkong.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/dingding-hongkong_pq9aou.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/disney.jpg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/disney.jpg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902615/manlung-wedding/disney_aley5k.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/go-steady.jpeg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/go-steady.jpeg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902624/manlung-wedding/go-steady_l21wfo.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/graduation.jpg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/graduation.jpg`,
+    src: "https://res.cloudinary.com/yomaru/image/upload/v1740902625/manlung-wedding/graduation_gbmej0.webp",
+    description: "Natalie's graduation in CUHK",
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/hong-kong-sunset.jpg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/hong-kong-sunset.jpg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/hong-kong-sunset_iph5vo.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/hongkong-seashore.jpg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/hongkong-seashore.jpg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/hongkong-seashore_kudwui.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/japan-bridge.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/japan-bridge.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902618/manlung-wedding/japan-bridge_ay19fh.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/natalie-bd.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/natalie-bd.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/natalie-bd_s5tzsr.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/northern-light.jpeg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/northern-light.jpeg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902613/manlung-wedding/northern-light_db0y69.webp`,
   },
 
   {
-    src: `${import.meta.env.BASE_URL}/gallery/riding-horse.jpeg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/riding-horse.jpeg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902624/manlung-wedding/riding-horse_udemdb.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/ring.jpeg`,
+    // src: `${import.meta.env.BASE_URL}/gallery/ring.jpeg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902619/manlung-wedding/ring_yt2yky.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/triple-date.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/triple-date.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902617/manlung-wedding/triple-date_q5xtlq.webp`,
   },
   {
-    src: `${import.meta.env.BASE_URL}/gallery/vancouver-sakura.JPG`,
+    // src: `${import.meta.env.BASE_URL}/gallery/vancouver-sakura.JPG`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902619/manlung-wedding/vancouver-sakura_jx0uxf.webp`,
   },
 ];
 

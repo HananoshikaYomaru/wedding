@@ -38,6 +38,13 @@ export default function ImportantInfo() {
             <p className="text-[#6d6d6d]">University Golf Club</p>
             <p className="text-[#6d6d6d]">5185 University Blvd</p>
             <p className="text-[#6d6d6d]">Vancouver, BC V6T 1X5</p>
+            {/* link to google maps */}
+            <a
+              href="https://maps.app.goo.gl/LUeyiLL3jeunvYxW9"
+              className="text-[#6d6d6d] underline"
+            >
+              View on Google Maps
+            </a>
           </div>
         </div>
 

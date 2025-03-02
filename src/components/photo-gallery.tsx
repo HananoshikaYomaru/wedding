@@ -75,7 +75,7 @@ const photos: Photo[] = [
   },
   {
     // src: `${import.meta.env.BASE_URL}/gallery/2023-halloween.JPG`,
-    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902617/manlung-wedding/2024-halloween_ru7hxg.webp`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/2023-halloween_xj0gwe.webp`,
     description: "Having fun in Halloween 2023 with Vancouver campus ministry",
   },
   {

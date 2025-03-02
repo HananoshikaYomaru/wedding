@@ -23,8 +23,9 @@ export default function ImportantInfo() {
               <Clock className="w-7 h-7 text-[#d3b8a3]" />
             </div>
             <h3 className="text-xl font-medium text-[#3d3d3d] mb-2">Time</h3>
-            <p className="text-[#6d6d6d]">Ceremony: 3:00 PM</p>
-            <p className="text-[#6d6d6d] mt-1">Reception: 5:30 PM</p>
+            <p className="text-[#6d6d6d]">Ceremony: 5:30 PM</p>
+            <p className="text-[#6d6d6d] mt-1">Stand up reception: 6:30 PM</p>
+            <p className="text-[#6d6d6d] mt-1">Site down reception: 7:30 PM</p>
           </div>
 
           <div className="flex flex-col items-center text-center">

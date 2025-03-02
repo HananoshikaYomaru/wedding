@@ -108,6 +108,10 @@ const photos: Photo[] = [
     src: `https://res.cloudinary.com/yomaru/image/upload/v1740902614/manlung-wedding/bridge-sidehead_m2ephl.webp`,
   },
   {
+    // src: `${import.meta.env.BASE_URL}/gallery/go-steady.jpeg`,
+    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902624/manlung-wedding/go-steady_l21wfo.webp`,
+  },
+  {
     // src: `${import.meta.env.BASE_URL}/gallery/confess-book-of-love.JPG`,
     src: `https://res.cloudinary.com/yomaru/image/upload/v1740902622/manlung-wedding/confess-book-of-love_lwj4ia.webp`,
   },
@@ -124,10 +128,6 @@ const photos: Photo[] = [
     src: `https://res.cloudinary.com/yomaru/image/upload/v1740902615/manlung-wedding/disney_aley5k.webp`,
   },
   {
-    // src: `${import.meta.env.BASE_URL}/gallery/go-steady.jpeg`,
-    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902624/manlung-wedding/go-steady_l21wfo.webp`,
-  },
-  {
     // src: `${import.meta.env.BASE_URL}/gallery/graduation.jpg`,
     src: "https://res.cloudinary.com/yomaru/image/upload/v1740902625/manlung-wedding/graduation_gbmej0.webp",
     description: "Natalie's graduation in CUHK",
@@ -138,7 +138,7 @@ const photos: Photo[] = [
   },
   {
     // src: `${import.meta.env.BASE_URL}/gallery/hongkong-seashore.jpg`,
-    src: `https://res.cloudinary.com/yomaru/image/upload/v1740902612/manlung-wedding/hongkong-seashore_kudwui.webp`,
+    src: "https://res.cloudinary.com/yomaru/image/upload/v1740903617/manlung-wedding/hongkong-seashore_kudwui.webp",
   },
   {
     // src: `${import.meta.env.BASE_URL}/gallery/japan-bridge.JPG`,

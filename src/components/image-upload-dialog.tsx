@@ -1,14 +1,9 @@
-import { useEffect, useState, useRef } from "react";
-import { Upload, LoaderCircle, Crop } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
-import { Sticker } from "./draggable-stickers";
 // import {
 //   resizeCanvas,
 //   maskImageCanvas,
@@ -16,13 +11,6 @@ import { Sticker } from "./draggable-stickers";
 //   float32ArrayToCanvas,
 // } from "./image-segmentation";
 
-import {
-  resizeCanvas,
-  maskImageCanvas,
-  canvasToFloat32Array,
-  float32ArrayToCanvas,
-  sliceTensor,
-} from "@/lib/imageutils";
 import { SamEditor } from "./sam-editor";
 
 // Point type for selection
@@ -54,7 +42,7 @@ export const ImageUploadDialog = ({
   };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-min rounded-lg">
+      <DialogContent className="min-w-min rounded-lg bg-white">
         <DialogHeader>
           <DialogTitle>Create Your Sticker</DialogTitle>
         </DialogHeader>

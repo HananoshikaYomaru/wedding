@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import InputDialog from "@/components/ui/inputdialog";
 import { maskImageCanvas, resizeAndPadBox } from "@/lib/imageutils";
 
-import { LoaderCircle, ImageUp, ImageDown, Github, Fan } from "lucide-react";
+import { LoaderCircle, ImageUp, ImageDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { imageSize, useSamWorker } from "./use-sam-worker";
@@ -248,7 +248,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
   };
 
   const getCanvasFromImageUrl: (
-    imageUrl: string,
+    imageUrl: string
   ) => Promise<HTMLCanvasElement> = async (imageUrl: string) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -260,7 +260,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
 
         const box = resizeAndPadBox(
           { h: img.naturalHeight, w: img.naturalWidth },
-          { h: largestDim, w: largestDim },
+          { h: largestDim, w: largestDim }
         );
 
         if (!box) {
@@ -283,7 +283,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
           box.x,
           box.y,
           box.w,
-          box.h,
+          box.h
         );
 
         resolve(canvas);
@@ -305,7 +305,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
   useEffect(() => {
     const getImage = async () => {
       const canvas = await getCanvasFromImageUrl(
-        "https://upload.wikimedia.org/wikipedia/commons/3/38/Flamingos_Laguna_Colorada.jpg",
+        `${import.meta.env.BASE_URL}/gallery/2024-halloween.jpeg`
       );
       setImage(canvas);
       await encodeImage(canvas);
@@ -320,7 +320,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
         canvasEl.current,
         imageCanvas,
         maskCanvas ?? undefined,
-        pointsCanvas ?? undefined,
+        pointsCanvas ?? undefined
       );
     }
   }, [imageCanvas, maskCanvas, pointsCanvas]);
@@ -329,7 +329,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
     canvas: HTMLCanvasElement,
     image: HTMLCanvasElement,
     mask?: HTMLCanvasElement,
-    points?: HTMLCanvasElement,
+    points?: HTMLCanvasElement
   ) => {
     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -346,7 +346,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
       0,
       0,
       canvas.width,
-      canvas.height,
+      canvas.height
     );
 
     // If mask is provided, draw it on top with alpha
@@ -361,7 +361,7 @@ export function SamEditor({ onImageCropped, opened }: SamEditorProps) {
         0,
         0,
         canvas.width,
-        canvas.height,
+        canvas.height
       );
       ctx.globalAlpha = 1;
     }

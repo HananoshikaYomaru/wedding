@@ -50,6 +50,24 @@ type Photo = {
 
 const photos: Photo[] = [
   {
+    src: `${import.meta.env.BASE_URL}/gallery/propose.jpg`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/propose-hug.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/propose-success.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/blue-pink.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/bridge-fun.JPG`,
+  },
+  {
+    src: `${import.meta.env.BASE_URL}/gallery/bridge-hug.JPG`,
+  },
+  {
     src: `${import.meta.env.BASE_URL}/gallery/2023-halloween.JPG`,
     description: "Having fun in Halloween 2023 with Vancouver campus ministry",
   },
@@ -69,15 +87,7 @@ const photos: Photo[] = [
     src: `${import.meta.env.BASE_URL}/gallery/2024-winter.jpeg`,
     description: "We are playing snow in Winter 2024",
   },
-  {
-    src: `${import.meta.env.BASE_URL}/gallery/blue-pink.JPG`,
-  },
-  {
-    src: `${import.meta.env.BASE_URL}/gallery/bridge-fun.JPG`,
-  },
-  {
-    src: `${import.meta.env.BASE_URL}/gallery/bridge-hug.JPG`,
-  },
+
   {
     src: `${import.meta.env.BASE_URL}/gallery/bridge-selfie.JPG`,
   },
@@ -117,15 +127,7 @@ const photos: Photo[] = [
   {
     src: `${import.meta.env.BASE_URL}/gallery/northern-light.jpeg`,
   },
-  {
-    src: `${import.meta.env.BASE_URL}/gallery/propose-hug.JPG`,
-  },
-  {
-    src: `${import.meta.env.BASE_URL}/gallery/propose-success.JPG`,
-  },
-  {
-    src: `${import.meta.env.BASE_URL}/gallery/propose.jpg`,
-  },
+
   {
     src: `${import.meta.env.BASE_URL}/gallery/riding-horse.jpeg`,
   },
@@ -188,9 +190,9 @@ const Lightbox = ({
 
       <div className="lightbox-container">
         <TransformWrapper
-          initialScale={1}
-          minScale={0.5}
-          maxScale={4}
+          initialScale={0.5}
+          minScale={0.2}
+          maxScale={3}
           centerOnInit
           wheel={{ wheelDisabled: false, step: 15 }}
           doubleClick={{ disabled: false }}
@@ -212,17 +214,40 @@ const Lightbox = ({
                 </TransformComponent>
               </div>
               <div className="zoom-controls">
-                <button onClick={() => zoomIn()} className="zoom-button">
+                <button
+                  onClick={() => zoomIn()}
+                  className="zoom-button"
+                  type="button"
+                >
                   <ZoomIn size={20} />
                 </button>
-                <button onClick={() => zoomOut()} className="zoom-button">
+                <button
+                  onClick={() => zoomOut()}
+                  className="zoom-button"
+                  type="button"
+                >
                   <ZoomOut size={20} />
                 </button>
                 <button
                   onClick={() => resetTransform()}
                   className="zoom-button"
+                  type="button"
                 >
                   <RotateCw size={20} />
+                </button>
+                <button
+                  className="lightbox-nav-button"
+                  onClick={handlePrevious}
+                  disabled={selectedImage === 0}
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  className="lightbox-nav-button"
+                  onClick={handleNext}
+                  disabled={selectedImage === photos.length - 1}
+                >
+                  <ChevronRight size={24} />
                 </button>
               </div>
             </>
@@ -232,23 +257,6 @@ const Lightbox = ({
         <p className="lightbox-description">
           {photos[selectedImage].description}
         </p>
-
-        <div className="lightbox-controls">
-          <button
-            className="lightbox-nav-button"
-            onClick={handlePrevious}
-            disabled={selectedImage === 0}
-          >
-            <ChevronLeft size={24} />
-          </button>
-          <button
-            className="lightbox-nav-button"
-            onClick={handleNext}
-            disabled={selectedImage === photos.length - 1}
-          >
-            <ChevronRight size={24} />
-          </button>
-        </div>
       </div>
     </div>
   );

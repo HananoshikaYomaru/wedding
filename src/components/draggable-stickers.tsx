@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { Image } from "lucide-react";
 import { ImageUploadDialog } from "./image-upload-dialog";
 import { useWindowSize } from "react-use";
-import "./hero.css";
+// import "./hero.css";
 import type { PanInfo } from "motion/react";
 // Type definitions
 export type Sticker = {

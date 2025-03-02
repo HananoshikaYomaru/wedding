@@ -1,5 +1,4 @@
 import { type ReactNode } from "react";
-import "./index.css";
 import { ConfettiControl } from "@/components/confetti-control";
 
 // Define font variables for CSS

@@ -8,7 +8,7 @@ export default function Hero() {
 
   return (
     <section
-      className="z-10 relative h-screen flex flex-col items-center justify-center overflow-x-hidden overflow-y-hidden"
+      className="z-10 relative h-screen flex flex-col items-center justify-center overflow-x-hidden overflow"
       style={{}}
     >
       <div className="absolute inset-0 z-0">

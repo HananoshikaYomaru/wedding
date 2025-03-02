@@ -1,6 +1,6 @@
 import { useState, useEffect, memo } from "react";
 import { motion } from "motion/react";
-import "./hero.css";
+// import "./hero.css";
 import { useWindowSize } from "react-use";
 import type { PanInfo } from "motion/react";
 

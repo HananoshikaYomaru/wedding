@@ -53,6 +53,15 @@ const photos: Photo[] = [
     src: `https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/propose-success_rcipks.webp`,
   },
   {
+    src: "https://res.cloudinary.com/yomaru/image/upload/v1740980150/manlung-wedding/outlet-1.webp",
+  },
+  {
+    src: "https://res.cloudinary.com/yomaru/image/upload/v1740980147/manlung-wedding/outlet-2.webp",
+  },
+  {
+    src: "https://res.cloudinary.com/yomaru/image/upload/v1740980148/manlung-wedding/rose-are.webp",
+  },
+  {
     // src: `${import.meta.env.BASE_URL}/gallery/blue-pink.JPG`,
     src: `https://res.cloudinary.com/yomaru/image/upload/v1740902616/manlung-wedding/blue-pink_oomem8.webp`,
   },
@@ -93,6 +102,7 @@ const photos: Photo[] = [
     // src: `${import.meta.env.BASE_URL}/gallery/bridge-sidehead.JPG`,
     src: `https://res.cloudinary.com/yomaru/image/upload/v1740902614/manlung-wedding/bridge-sidehead_m2ephl.webp`,
   },
+
   {
     // src: `${import.meta.env.BASE_URL}/gallery/go-steady.jpeg`,
     src: `https://res.cloudinary.com/yomaru/image/upload/v1740902624/manlung-wedding/go-steady_l21wfo.webp`,
@@ -141,18 +151,6 @@ const photos: Photo[] = [
     // src: `${import.meta.env.BASE_URL}/gallery/vancouver-sakura.JPG`,
     src: `https://res.cloudinary.com/yomaru/image/upload/v1740902619/manlung-wedding/vancouver-sakura_jx0uxf.webp`,
   },
-  {
-    src: "https://res.cloudinary.com/yomaru/image/upload/v1740980150/manlung-wedding/outlet-1.webp",
-  },
-  {
-    src: "https://res.cloudinary.com/yomaru/image/upload/v1740980148/manlung-wedding/rose-are.webp",
-  },
-  {
-    src: "https://res.cloudinary.com/yomaru/image/upload/v1740980148/manlung-wedding/rose-are.webp",
-  },
-  {
-    src: "https://res.cloudinary.com/yomaru/image/upload/v1740980147/manlung-wedding/outlet-2.webp",
-  },
 ];
 
 const Lightbox = ({
@@ -170,7 +168,7 @@ const Lightbox = ({
 
   const handleNext = useCallback(() => {
     setSelectedImage(
-      selectedImage < photos.length - 1 ? selectedImage + 1 : null,
+      selectedImage < photos.length - 1 ? selectedImage + 1 : null
     );
   }, [setSelectedImage, selectedImage, photos.length]);
 
@@ -180,7 +178,7 @@ const Lightbox = ({
       if (e.key === "ArrowRight") handleNext();
       if (e.key === "Escape") setSelectedImage(null);
     },
-    [handlePrevious, handleNext, setSelectedImage],
+    [handlePrevious, handleNext, setSelectedImage]
   );
 
   // Add event listener for keyboard navigation

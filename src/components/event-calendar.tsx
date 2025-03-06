@@ -55,6 +55,13 @@ const events = [
     title: "Honey Moon 🍯",
     description: "We're off to the Zurich, Switzerland 🇨🇭!",
   },
+  {
+    date: new Date(2026, 2, 1),
+    title: "Hong Kong Wedding Banquet",
+    description:
+      "We're having a second wedding banquet in Hong Kong! More details to come.",
+    tbd: true,
+  },
 ];
 
 export default function EventCalendar() {
@@ -62,7 +69,7 @@ export default function EventCalendar() {
 
   // Find the selected event
   const selectedEvent = events.find(
-    (event) => date && event.date.toDateString() === date.toDateString(),
+    (event) => date && event.date.toDateString() === date.toDateString()
   );
 
   // Get all important dates for the calendar
@@ -83,7 +90,7 @@ export default function EventCalendar() {
                   variant={"outline"}
                   className={cn(
                     "w-full justify-start text-left font-normal mb-4",
-                    !date && "text-muted-foreground",
+                    !date && "text-muted-foreground"
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />

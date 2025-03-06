@@ -40,6 +40,8 @@ export default function ImportantInfo() {
             <p className="text-[#6d6d6d]">Vancouver, BC V6T 1X5</p>
             {/* link to google maps */}
             <a
+              target="_blank"
+              rel="noopener noreferrer"
               href="https://maps.app.goo.gl/LUeyiLL3jeunvYxW9"
               className="text-[#6d6d6d] underline"
             >

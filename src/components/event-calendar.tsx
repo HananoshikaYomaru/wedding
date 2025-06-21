@@ -25,7 +25,7 @@ const events = [
     description: "Please confirm your attendance by this date",
   },
   {
-    date: new Date(2050, 5, 21), // June 21, 2050
+    date: new Date(2025, 5, 21), // June 21, 2025
     title: "Bridal Shower",
     description:
       "For the bridal party and immediate family only.",

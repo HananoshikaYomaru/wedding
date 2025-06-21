@@ -25,30 +25,27 @@ const events = [
     description: "Please confirm your attendance by this date",
   },
   {
-    date: new Date(2025, 5, 2), // July 2, 2025
+    date: new Date(2050, 5, 21), // June 21, 2050
     title: "Bridal Shower",
     description:
-      "For the bridal party and immediate family only. This is a temporary date, we will confirm the final date closer to the wedding.",
-    tbd: true,
+      "For the bridal party and immediate family only.",
   },
   {
-    date: new Date(2025, 6, 2), // July 2, 2025
+    date: new Date(2025, 6, 5), // July 5, 2025
     title: "Bachelor Party",
     description:
-      "For the groom and his friends. This is a temporary date, we will confirm the final date closer to the wedding.",
-    tbd: true,
+      "For the groom and his friends.",
   },
   {
     date: new Date(2025, 6, 3), // July 3, 2025
     title: "Rehearsal Dinner",
     description:
-      "For wedding party and immediate family only. This is a temporary date, we will confirm the final date closer to the wedding.",
-    tbd: true,
+      "For wedding party and immediate family only. 4pm to 10pm",
   },
   {
     date: new Date(2025, 6, 6), // July 6, 2025
     title: "Wedding Day",
-    description: "Ceremony at 5:30 PM, Reception to follow at 7:30 PM",
+    description: "Ceremony at 5:00 PM, Reception to follow at 6:30 PM",
   },
   {
     date: new Date(2025, 6, 7), // July 7, 2025
